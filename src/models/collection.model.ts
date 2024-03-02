@@ -41,6 +41,12 @@ export class Collection extends Entity {
   // })
   // category: string;
 
+    //! Here we have a "HasMany" relation with product data model.
+    @property({
+      type: 'array',
+    })
+    products: Array<string>;
+
   //* An front image about the collection items
   @property({
     type: 'string',
