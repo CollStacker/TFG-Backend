@@ -7,15 +7,14 @@ export class Category extends Entity {
     id: true,
     generated: true,
   })
-  _id?: string;
+  _id: string;
 
   @property({
     type: 'string',
     required: true,
   })
-  title: string;
-
-
+  name: string;
+  
   constructor(data?: Partial<Category>) {
     super(data);
   }

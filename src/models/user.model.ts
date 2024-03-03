@@ -1,4 +1,5 @@
-import {Entity, model, property} from '@loopback/repository';
+import {Entity, hasMany, model, property} from '@loopback/repository';
+import {Collection} from './collection.model'
 
 @model()
 export class User extends Entity {
@@ -51,17 +52,14 @@ export class User extends Entity {
   })
   biography: string;
 
-  //! Here we have a "HasMany" relation with user data model.
   @property({
     type: 'array',
+    itemType: 'string',
   })
-  friends: Array<string>;
+  friends?: string[];
 
-  //! Here we have a "HasMany" relation with collection data model.
-  @property({
-    type: 'array',
-  })
-  collection: Array<string>;
+  @hasMany(() => Collection, {keyTo: 'userId'})
+  collections?: Collection[];
 
   constructor(data?: Partial<User>) {
     super(data);
@@ -69,7 +67,6 @@ export class User extends Entity {
 }
 
 export interface UserRelations {
-  // describe navigational properties here
 }
 
 export type UserWithRelations = User & UserRelations;

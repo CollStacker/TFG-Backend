@@ -1,4 +1,7 @@
-import {Entity, model, property} from '@loopback/repository';
+import {Entity, belongsTo, hasMany, model, property} from '@loopback/repository';
+import {Product} from './product.model'
+import {User} from './user.model'
+import {Category} from './category.model';
 
 @model()
 export class Collection extends Entity {
@@ -17,42 +20,28 @@ export class Collection extends Entity {
 
   @property({
     type: 'string',
-    required: true,
   })
   description: string;
 
-  //! NEED TO KNOW HOW TO CONNECT THAT PROPERTY TO ANOTHER DATA MODEL
-  // @property({
-  //   type: 'string',
-  //   required: true,
-  // })
-  // owner: string;
-
   @property({
     type: 'string',
-    required: false,
   })
   tag: string;
-
-  //! NEED TO KNOW HOW TO CONNECT THAT PROPERTY TO ANOTHER DATA MODEL
-  // @property({
-  //   type: 'string',
-  //   required: true,
-  // })
-  // category: string;
-
-    //! Here we have a "HasMany" relation with product data model.
-    @property({
-      type: 'array',
-    })
-    products: Array<string>;
 
   //* An front image about the collection items
   @property({
     type: 'string',
-    required: false,
   })
   frontPage: string;
+
+  @hasMany(() => Product)
+  products?: Product[];
+
+  @belongsTo(() => User, {keyFrom: 'userId', name: 'owner'})
+  userId: string;
+
+  @belongsTo(() => Category)
+  categoryId: string;
 
   constructor(data?: Partial<Collection>) {
     super(data);
