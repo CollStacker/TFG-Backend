@@ -1,0 +1,53 @@
+import {Entity, belongsTo, model, property} from '@loopback/repository';
+import {Collection} from './collection.model'
+
+@model()
+export class Product extends Entity {
+  @property({
+    type: 'string',
+    id: true,
+    generated: true,
+  })
+  _id?: string;
+
+  @property({
+    type: 'string',
+    required: true,
+  })
+  name: string;
+
+  @property({
+    type: 'string',
+    required: true,
+  })
+  description: string;
+
+  @property({
+    type: 'string',
+    default: null,
+  })
+  image?: string;
+
+  @property({
+    type: 'string',
+  })
+  releaseYear?: string;
+
+  @property({
+    type: 'string',
+  })
+  brand?: string;
+
+  @belongsTo(() => Collection)
+  collectionId: string;
+
+  constructor(data?: Partial<Product>) {
+    super(data);
+  }
+}
+
+export interface ProductRelations {
+
+}
+
+export type ProductWithRelations = Product & ProductRelations;
