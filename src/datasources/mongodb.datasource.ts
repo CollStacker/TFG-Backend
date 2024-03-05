@@ -1,17 +1,25 @@
 import {inject, lifeCycleObserver, LifeCycleObserver} from '@loopback/core';
 import {juggler} from '@loopback/repository';
 
+// const config = {
+//   name: 'mongodb',
+//   connector: 'mongodb',
+//   url: 'mongodb+srv://alu0101404813:2dsRXspS1qV0gvFO@cluster0.0yaozhf.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0',
+//   host: 'mongodbAtlas',
+//   port: 27017,
+//   user: 'alu0101404813',
+//   password: '2dsRXspS1qV0gvFO',
+//   database: 'CollStackerDB',
+//   useNewUrlParser: true
+// };
+
 const config = {
   name: 'mongodb',
   connector: 'mongodb',
-  url: 'mongodb+srv://alu0101404813:2dsRXspS1qV0gvFO@cluster0.0yaozhf.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0',
-  host: 'mongodbAtlas',
-  port: 27017,
-  user: 'alu0101404813',
-  password: '2dsRXspS1qV0gvFO',
-  database: 'CollStackerDB',
+  url: 'mongodb+srv://alu0101404813:2dsRXspS1qV0gvFO@cluster0.0yaozhf.mongodb.net/CollStackerDB?retryWrites=true&w=majority&appName=Cluster0',
   useNewUrlParser: true
 };
+
 
 // Observe application's life cycle to disconnect the datasource when
 // application is stopped. This allows the application to be shut down
