@@ -1,7 +1,7 @@
 import {Entity, model, property} from '@loopback/repository';
 
 @model()
-export class User extends Entity {
+export class UserModel extends Entity {
   @property({
     type: 'string',
     id: true,
@@ -57,7 +57,7 @@ export class User extends Entity {
   })
   biography: string;
 
-  constructor(data?: Partial<User>) {
+  constructor(data?: Partial<UserModel>) {
     super(data);
   }
 }
@@ -65,4 +65,4 @@ export class User extends Entity {
 export interface UserRelations {
 }
 
-export type UserWithRelations = User & UserRelations;
+export type UserWithRelations = UserModel & UserRelations;
