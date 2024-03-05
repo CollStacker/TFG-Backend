@@ -18,6 +18,11 @@ export class Category extends Entity {
   })
   name: string;
 
+  @property({
+    type: 'string',
+  })
+  description: String;
+
   constructor(data?: Partial<Category>) {
     super(data);
   }
