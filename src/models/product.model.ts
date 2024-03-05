@@ -38,8 +38,11 @@ export class Product extends Entity {
   })
   brand?: string;
 
-  @belongsTo(() => Collection)
-  collectionId: string;
+  @property({
+    type: 'string',
+    required: true,
+  })
+  collectionId: String;
 
   constructor(data?: Partial<Product>) {
     super(data);
