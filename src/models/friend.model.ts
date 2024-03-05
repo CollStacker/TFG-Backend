@@ -1,35 +1,34 @@
 import {Entity, model, property} from '@loopback/repository';
 
 @model()
-export class Category extends Entity {
+export class Friend extends Entity {
   @property({
     type: 'string',
     id: true,
     generated: true,
   })
-  _id: string;
+  _id?: string;
 
   @property({
     type: 'string',
     required: true,
-    index: {
-      unique: true
-    },
   })
-  name: string;
+  userId: string;
 
   @property({
-    type: 'string',
+    type: 'array',
+    itemType: 'string',
   })
-  description: String;
+  friends?: string[];
 
-  constructor(data?: Partial<Category>) {
+
+  constructor(data?: Partial<Friend>) {
     super(data);
   }
 }
 
-export interface CategoryRelations {
+export interface FriendRelations {
   // describe navigational properties here
 }
 
-export type CategoryWithRelations = Category & CategoryRelations;
+export type FriendWithRelations = Friend & FriendRelations;

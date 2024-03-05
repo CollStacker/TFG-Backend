@@ -19,7 +19,10 @@ import {
 } from '@loopback/rest';
 import {Category} from '../models';
 import {CategoryRepository} from '../repositories';
+import {authenticate} from '@loopback/authentication';
 
+//* This decorator protects the API and the endpoints of CategoryController
+@authenticate('jwt')
 export class CategoryController {
   constructor(
     @repository(CategoryRepository)

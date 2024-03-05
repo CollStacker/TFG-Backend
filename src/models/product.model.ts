@@ -1,5 +1,4 @@
-import {Entity, belongsTo, model, property} from '@loopback/repository';
-import {Collection} from './collection.model'
+import {Entity, model, property} from '@loopback/repository';
 
 @model()
 export class Product extends Entity {
@@ -38,8 +37,11 @@ export class Product extends Entity {
   })
   brand?: string;
 
-  @belongsTo(() => Collection)
-  collectionId: string;
+  @property({
+    type: 'string',
+    required: true,
+  })
+  collectionId: String;
 
   constructor(data?: Partial<Product>) {
     super(data);

@@ -19,14 +19,17 @@ import {
 } from '@loopback/rest';
 import {Product} from '../models';
 import {ProductRepository} from '../repositories';
+import {authenticate} from '@loopback/authentication';
 
+//* This decorator protects the API and the endpoints of CategoryController
+@authenticate('jwt')
 export class ProductController {
   constructor(
     @repository(ProductRepository)
     public productRepository : ProductRepository,
   ) {}
 
-  @post('/product')
+  @post('/products')
   @response(200, {
     description: 'Product model instance',
     content: {'application/json': {schema: getModelSchemaRef(Product)}},
@@ -47,7 +50,7 @@ export class ProductController {
     return this.productRepository.create(product);
   }
 
-  @get('/product/count')
+  @get('/products/count')
   @response(200, {
     description: 'Product model count',
     content: {'application/json': {schema: CountSchema}},
@@ -58,7 +61,7 @@ export class ProductController {
     return this.productRepository.count(where);
   }
 
-  @get('/product')
+  @get('/products')
   @response(200, {
     description: 'Array of Product model instances',
     content: {
@@ -76,7 +79,7 @@ export class ProductController {
     return this.productRepository.find(filter);
   }
 
-  @patch('/product')
+  @patch('/products')
   @response(200, {
     description: 'Product PATCH success count',
     content: {'application/json': {schema: CountSchema}},
@@ -95,7 +98,7 @@ export class ProductController {
     return this.productRepository.updateAll(product, where);
   }
 
-  @get('/product/{id}')
+  @get('/products/{id}')
   @response(200, {
     description: 'Product model instance',
     content: {
@@ -111,7 +114,7 @@ export class ProductController {
     return this.productRepository.findById(id, filter);
   }
 
-  @patch('/product/{id}')
+  @patch('/products/{id}')
   @response(204, {
     description: 'Product PATCH success',
   })
@@ -129,7 +132,7 @@ export class ProductController {
     await this.productRepository.updateById(id, product);
   }
 
-  @put('/product/{id}')
+  @put('/products/{id}')
   @response(204, {
     description: 'Product PUT success',
   })
@@ -140,7 +143,7 @@ export class ProductController {
     await this.productRepository.replaceById(id, product);
   }
 
-  @del('/product/{id}')
+  @del('/products/{id}')
   @response(204, {
     description: 'Product DELETE success',
   })

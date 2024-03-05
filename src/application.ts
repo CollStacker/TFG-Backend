@@ -10,6 +10,16 @@ import {ServiceMixin} from '@loopback/service-proxy';
 import path from 'path';
 import {MySequence} from './sequence';
 
+// ---------- IMPORTS TO VALIDATE AUTHENTICATION IN THE APP -------------
+import {AuthenticationComponent} from '@loopback/authentication';
+import {
+  JWTAuthenticationComponent,
+  //SECURITY_SCHEME_SPEC,
+  UserServiceBindings,
+} from '@loopback/authentication-jwt';
+import {MongodbDataSource} from './datasources';
+// ----------------------------------------------------------------------
+
 export {ApplicationConfig};
 
 export class CollStacker extends BootMixin(
@@ -40,5 +50,12 @@ export class CollStacker extends BootMixin(
         nested: true,
       },
     };
+
+    // Mount authentication system
+    this.component(AuthenticationComponent);
+    // Mount jwt component
+    this.component(JWTAuthenticationComponent);
+    // Bind datasource
+    this.dataSource(MongodbDataSource, UserServiceBindings.DATASOURCE_NAME);
   }
 }
