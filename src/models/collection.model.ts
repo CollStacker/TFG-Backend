@@ -1,7 +1,4 @@
-import {Entity, belongsTo, hasMany, model, property} from '@loopback/repository';
-import {Product} from './product.model'
-import {User} from './user.model'
-import {Category} from './category.model';
+import {Entity, model, property} from '@loopback/repository';
 
 @model()
 export class Collection extends Entity {
@@ -34,14 +31,17 @@ export class Collection extends Entity {
   })
   frontPage: string;
 
-  @hasMany(() => Product)
-  products?: Product[];
+  @property({
+    type: 'string',
+    required: true,
+  })
+  ownerId: String;
 
-  @belongsTo(() => User, {keyFrom: 'userId', name: 'owner'})
-  userId: string;
-
-  @belongsTo(() => Category)
-  categoryId: string;
+  @property({
+    type: 'string',
+    required: true,
+  })
+  categoryId: String;
 
   constructor(data?: Partial<Collection>) {
     super(data);

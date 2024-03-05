@@ -1,5 +1,4 @@
-import {Entity, belongsTo, model, property} from '@loopback/repository';
-import {Collection} from './collection.model'
+import {Entity, model, property} from '@loopback/repository';
 
 @model()
 export class Product extends Entity {
