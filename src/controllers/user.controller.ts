@@ -21,6 +21,7 @@ import {genSalt, hash} from 'bcryptjs';
 import lodash from 'lodash';
 import {UserModel} from '../models';
 import { UserRepository } from '../repositories/user.repository';
+import { HttpError } from '../utils/http-error';
 
 const CredentialsSchema: SchemaObject = {
   type: 'object',
@@ -137,15 +138,20 @@ export class UserController {
     })
     newUserRequest: UserModel,
   ): Promise<UserModel> {
-    const password = await hash(newUserRequest.password, await genSalt());
-    
+
+    const existingUser = await this.userRepository.findOne({where: {email: newUserRequest.email}}) // Checking if an user with same email exists in db
+
+    if (existingUser != null) {
+      throw new HttpError(400,'Correo electrónico ya existente.')
+    }
+
+    const password = await hash(newUserRequest.password, await genSalt());  // Encrypting password
+
     newUserRequest.password = password;// Seting hashed password
 
     const savedUser: UserModel = await this.userRepository.create(
       lodash.omit(newUserRequest, '_id'),
     );
-
-    //await this.userRepository.create(savedUser); // Saving the UserData in the database
 
     return savedUser;
   }
