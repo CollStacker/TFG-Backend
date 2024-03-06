@@ -28,7 +28,7 @@ export class UserModel extends Entity {
     type: 'string',
     required: true,
   })
-  surname: string;
+  surnames: string;
 
   @property({
     type: 'string',
