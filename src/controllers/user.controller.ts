@@ -14,7 +14,6 @@ import {
   getModelSchemaRef,
   post,
   requestBody,
-  SchemaObject,
 } from '@loopback/rest';
 import {SecurityBindings, securityId, UserProfile} from '@loopback/security';
 import {genSalt, hash} from 'bcryptjs';
@@ -22,29 +21,8 @@ import lodash from 'lodash';
 import {UserModel} from '../models';
 import { UserRepository } from '../repositories/user.repository';
 import { HttpError } from '../utils/http-error';
+import {CredentialsRequestBody} from '../utils/loginCredentials'
 
-const CredentialsSchema: SchemaObject = {
-  type: 'object',
-  required: ['email', 'password'],
-  properties: {
-    email: {
-      type: 'string',
-      format: 'email',
-    },
-    password: {
-      type: 'string',
-      minLength: 8,
-    },
-  },
-};
-
-export const CredentialsRequestBody = {
-  description: 'The input of login function',
-  required: true,
-  content: {
-    'application/json': {schema: CredentialsSchema},
-  },
-};
 
 export class UserController {
   constructor(
