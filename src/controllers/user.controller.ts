@@ -3,8 +3,8 @@ import {
   Credentials,
   MyUserService,
   TokenServiceBindings,
-  User,
-  UserRepository,
+  //User,
+  // UserRepository,
   UserServiceBindings,
 } from '@loopback/authentication-jwt';
 import {inject} from '@loopback/core';
@@ -20,6 +20,7 @@ import {SecurityBindings, securityId, UserProfile} from '@loopback/security';
 import {genSalt, hash} from 'bcryptjs';
 import lodash from 'lodash';
 import {UserModel} from '../models';
+import { UserRepository } from '../repositories/user.repository';
 
 const CredentialsSchema: SchemaObject = {
   type: 'object',
@@ -116,7 +117,7 @@ export class UserController {
         content: {
           'application/json': {
             schema: {
-              'x-ts-type': User,
+              'x-ts-type': UserModel,
             },
           },
         },
@@ -129,18 +130,22 @@ export class UserController {
         'application/json': {
           schema: getModelSchemaRef(UserModel, {
             title: 'NewUser',
+            exclude: ['_id'],
           }),
         },
       },
     })
     newUserRequest: UserModel,
-  ): Promise<User> {
+  ): Promise<UserModel> {
     const password = await hash(newUserRequest.password, await genSalt());
-    const savedUser = await this.userRepository.create(
-      lodash.omit(newUserRequest, 'password'),
+    
+    newUserRequest.password = password;// Seting hashed password
+
+    const savedUser: UserModel = await this.userRepository.create(
+      lodash.omit(newUserRequest, '_id'),
     );
 
-    await this.userRepository.userCredentials(savedUser.id).create({password});
+    //await this.userRepository.create(savedUser); // Saving the UserData in the database
 
     return savedUser;
   }
