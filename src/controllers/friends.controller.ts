@@ -19,10 +19,8 @@ import {
 } from '@loopback/rest';
 import {Friend} from '../models';
 import {FriendRepository} from '../repositories';
-import {authenticate} from '@loopback/authentication';
+//import {authenticate} from '@loopback/authentication';
 
-//* This decorator protects the API and the endpoints of CategoryController
-@authenticate('jwt')
 export class FriendsController {
   constructor(
     @repository(FriendRepository)

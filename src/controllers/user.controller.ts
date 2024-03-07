@@ -22,10 +22,14 @@ import {UserModel} from '../models';
 import { UserRepository } from '../repositories/user.repository';
 import { HttpError } from '../utils/http-error';
 import {CredentialsRequestBody} from '../utils/loginCredentials'
-
+import {FriendsController} from './friends.controller'
+import {parseFriendRequestBody} from '../utils/utilities'
 
 export class UserController {
   constructor(
+    //Friend controller
+    @inject('controllers.FriendsController')
+    protected friendsController: FriendsController,
     @inject(TokenServiceBindings.TOKEN_SERVICE)
     public jwtService: TokenService,
     @inject(UserServiceBindings.USER_SERVICE)
@@ -123,14 +127,20 @@ export class UserController {
       throw new HttpError(400,'Correo electrónico ya existente.')
     }
 
+
     const password = await hash(newUserRequest.password, await genSalt());  // Encrypting password
 
     newUserRequest.password = password;// Seting hashed password
 
     const savedUser: UserModel = await this.userRepository.create(
       lodash.omit(newUserRequest, '_id'),
-    );
+      );
+
+    //Saving UserId in Friend table
+    await this.friendsController.create(parseFriendRequestBody(savedUser._id))
 
     return savedUser;
   }
+
+  //* DELETE USER ACCOUNT
 }
