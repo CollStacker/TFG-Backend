@@ -3,8 +3,8 @@ import {
   Credentials,
   MyUserService,
   TokenServiceBindings,
-  User,
-  UserRepository,
+  //User,
+  // UserRepository,
   UserServiceBindings,
 } from '@loopback/authentication-jwt';
 import {inject} from '@loopback/core';
@@ -14,35 +14,15 @@ import {
   getModelSchemaRef,
   post,
   requestBody,
-  SchemaObject,
 } from '@loopback/rest';
 import {SecurityBindings, securityId, UserProfile} from '@loopback/security';
 import {genSalt, hash} from 'bcryptjs';
 import lodash from 'lodash';
 import {UserModel} from '../models';
+import { UserRepository } from '../repositories/user.repository';
+import { HttpError } from '../utils/http-error';
+import {CredentialsRequestBody} from '../utils/loginCredentials'
 
-const CredentialsSchema: SchemaObject = {
-  type: 'object',
-  required: ['email', 'password'],
-  properties: {
-    email: {
-      type: 'string',
-      format: 'email',
-    },
-    password: {
-      type: 'string',
-      minLength: 8,
-    },
-  },
-};
-
-export const CredentialsRequestBody = {
-  description: 'The input of login function',
-  required: true,
-  content: {
-    'application/json': {schema: CredentialsSchema},
-  },
-};
 
 export class UserController {
   constructor(
@@ -116,7 +96,7 @@ export class UserController {
         content: {
           'application/json': {
             schema: {
-              'x-ts-type': User,
+              'x-ts-type': UserModel,
             },
           },
         },
@@ -129,18 +109,27 @@ export class UserController {
         'application/json': {
           schema: getModelSchemaRef(UserModel, {
             title: 'NewUser',
+            exclude: ['_id'],
           }),
         },
       },
     })
     newUserRequest: UserModel,
-  ): Promise<User> {
-    const password = await hash(newUserRequest.password, await genSalt());
-    const savedUser = await this.userRepository.create(
-      lodash.omit(newUserRequest, 'password'),
-    );
+  ): Promise<UserModel> {
 
-    await this.userRepository.userCredentials(savedUser.id).create({password});
+    const existingUser = await this.userRepository.findOne({where: {email: newUserRequest.email}}) // Checking if an user with same email exists in db
+
+    if (existingUser != null) {
+      throw new HttpError(400,'Correo electrónico ya existente.')
+    }
+
+    const password = await hash(newUserRequest.password, await genSalt());  // Encrypting password
+
+    newUserRequest.password = password;// Seting hashed password
+
+    const savedUser: UserModel = await this.userRepository.create(
+      lodash.omit(newUserRequest, '_id'),
+    );
 
     return savedUser;
   }
