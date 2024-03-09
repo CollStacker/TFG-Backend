@@ -13,6 +13,9 @@ import {
   get,
   getModelSchemaRef,
   post,
+  del,
+  param,
+  response,
   requestBody,
 } from '@loopback/rest';
 import {SecurityBindings, securityId, UserProfile} from '@loopback/security';
@@ -144,4 +147,15 @@ export class UserController {
   }
 
   //* DELETE USER ACCOUNT
+  @del('/user/{id}')
+  @response(204, {
+    description: 'User account DELETE succes.',
+  })
+  async deleteUser(@param.path.string('id') id: string): Promise<void> {
+    // Delete user from Friend table
+    await this.friendsController.deleteUserEntry(id);
+    // Delete all user products inside his collections
+    // Delete all user collections
+    // Finally Delete user
+  }
 }
