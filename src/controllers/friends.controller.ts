@@ -19,6 +19,7 @@ import {
 } from '@loopback/rest';
 import {Friend} from '../models';
 import {FriendRepository} from '../repositories';
+import {HttpError} from '../utils/http-error';
 //import {authenticate} from '@loopback/authentication';
 
 export class FriendsController {
@@ -147,5 +148,14 @@ export class FriendsController {
   })
   async deleteById(@param.path.string('id') id: string): Promise<void> {
     await this.friendRepository.deleteById(id);
+  }
+
+  async deleteUserEntry(id:string): Promise<void> {
+    const userEntry = await this.friendRepository.findOne({where: {userId: id}});
+    if (userEntry){
+      await this.friendRepository.deleteById(userEntry?._id);
+    } else {
+      throw new HttpError(400, 'There are not any entry in the db for that user.')
+    }
   }
 }
