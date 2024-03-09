@@ -1,6 +1,6 @@
 import {authenticate, TokenService} from '@loopback/authentication';
 import {
-  Credentials,
+  //Credentials,
   MyUserService,
   TokenServiceBindings,
   //User,
@@ -24,6 +24,7 @@ import { HttpError } from '../utils/http-error';
 import {CredentialsRequestBody} from '../utils/loginCredentials'
 import {FriendsController} from './friends.controller'
 import {parseFriendRequestBody} from '../utils/utilities'
+import { UserCredentials } from '../interfaces/userCredentials.interface';
 
 export class UserController {
   constructor(
@@ -59,12 +60,12 @@ export class UserController {
     },
   })
   async login(
-    @requestBody(CredentialsRequestBody) credentials: Credentials,
+    @requestBody(CredentialsRequestBody) credentials: UserCredentials,
   ): Promise<{token: string}> {
     // ensure the user exists, and the password is correct
-    const user = await this.userService.verifyCredentials(credentials);
+    const user = await this.userRepository.verifyCredentials(credentials);
     // convert a User object into a UserProfile object (reduced set of properties)
-    const userProfile = this.userService.convertToUserProfile(user);
+    const userProfile = this.userRepository.convertToUserProfile(user)
 
     // create a JSON Web Token based on the user profile
     const token = await this.jwtService.generateToken(userProfile);
