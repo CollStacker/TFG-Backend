@@ -157,5 +157,6 @@ export class UserController {
     // Delete all user products inside his collections
     // Delete all user collections
     // Finally Delete user
+    await this.userRepository.deleteById(id)
   }
 }
