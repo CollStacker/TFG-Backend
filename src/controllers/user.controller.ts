@@ -146,7 +146,7 @@ export class UserController {
     return savedUser;
   }
 
-  //* DELETE USER ACCOUNT
+  @authenticate('jwt')
   @del('/user/{id}')
   @response(204, {
     description: 'User account DELETE succes.',
