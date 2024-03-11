@@ -1,22 +1,13 @@
 import {inject, lifeCycleObserver, LifeCycleObserver} from '@loopback/core';
 import {juggler} from '@loopback/repository';
 
-// const config = {
-//   name: 'mongodb',
-//   connector: 'mongodb',
-//   url: 'mongodb+srv://alu0101404813:2dsRXspS1qV0gvFO@cluster0.0yaozhf.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0',
-//   host: 'mongodbAtlas',
-//   port: 27017,
-//   user: 'alu0101404813',
-//   password: '2dsRXspS1qV0gvFO',
-//   database: 'CollStackerDB',
-//   useNewUrlParser: true
-// };
+import dotenv from 'dotenv'
+dotenv.config() // Data from .env loaded in that variable
 
 const config = {
   name: 'mongodb',
   connector: 'mongodb',
-  url: 'mongodb+srv://alu0101404813:2dsRXspS1qV0gvFO@cluster0.0yaozhf.mongodb.net/CollStackerDB?retryWrites=true&w=majority&appName=Cluster0',
+  url: process.env.MONGODB_URI,
   useNewUrlParser: true
 };
 
