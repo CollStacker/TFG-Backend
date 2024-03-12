@@ -23,6 +23,17 @@ export class Category extends Entity {
   })
   description: String;
 
+  @property({
+    type: 'string',
+    required: true,
+  })
+  collectionId: string;
+
+  @property({
+    type: 'string',
+  })
+  parentId: string;
+
   constructor(data?: Partial<Category>) {
     super(data);
   }

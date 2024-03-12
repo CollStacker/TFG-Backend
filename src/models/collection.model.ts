@@ -37,12 +37,6 @@ export class Collection extends Entity {
   })
   ownerId: String;
 
-  @property({
-    type: 'string',
-    required: true,
-  })
-  categoryId: String;
-
   constructor(data?: Partial<Collection>) {
     super(data);
   }
