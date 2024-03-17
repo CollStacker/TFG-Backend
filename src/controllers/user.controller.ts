@@ -28,12 +28,15 @@ import {CredentialsRequestBody} from '../utils/loginCredentials'
 import {FriendsController} from './friends.controller'
 import {parseFriendRequestBody} from '../utils/utilities'
 import { UserCredentials } from '../interfaces/userCredentials.interface';
+import { CollectionController } from './collection.controller'
 
 export class UserController {
   constructor(
     //Friend controller
     @inject('controllers.FriendsController')
     protected friendsController: FriendsController,
+    @inject('controllers.FriendsController')
+    protected collectionsController: CollectionController,
     @inject(TokenServiceBindings.TOKEN_SERVICE)
     public jwtService: TokenService,
     @inject(UserServiceBindings.USER_SERVICE)
@@ -155,6 +158,13 @@ export class UserController {
     // Delete user from Friend table
     await this.friendsController.deleteUserEntry(id);
     // Delete all user products inside his collections
+    const collections = await this.collectionsController.getUserCollections(id);
+    if (collections) {
+      for (const collection of collections) {
+        if (collection._id)
+          await this.collectionsController.deleteById(collection._id);
+      }
+    }
     // Delete all user collections
     // Finally Delete user
     await this.userRepository.deleteById(id)
