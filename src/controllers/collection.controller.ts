@@ -4,7 +4,7 @@ import {
   // Filter,
   // FilterExcludingWhere,
   repository,
-  Where,
+  // Where,
 } from '@loopback/repository';
 import {
   post,
@@ -20,7 +20,7 @@ import {
 import {Collection} from '../models';
 import {CollectionRepository} from '../repositories';
 import {authenticate} from '@loopback/authentication';
-import { HttpError } from '../utils/http-error';
+// import { HttpError } from '../utils/http-error';
 
 //* This decorator protects the API and the endpoints of CategoryController
 @authenticate('jwt')
@@ -126,10 +126,11 @@ export class CollectionController {
   })
   async getUserCollections(
     @param.path.string('id') userId: string
-  ): Promise<Collection[]>  {
+  ): Promise<Collection[] | null>  {
     const collections = await this.collectionRepository.find({where: {ownerId: userId}});
     if (collections.length === 0) {
-      throw new HttpError(400, 'Thare aren`t any collection for this user.')
+      // throw new HttpError(400, 'Thare aren`t any collection for this user.')
+      return null
     }
     return collections;
   }
