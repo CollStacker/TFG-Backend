@@ -2,7 +2,7 @@ import {
   // Count,
   // CountSchema,
   // Filter,
-  FilterExcludingWhere,
+  // FilterExcludingWhere,
   repository,
   Where,
 } from '@loopback/repository';
@@ -20,6 +20,7 @@ import {
 import {Collection} from '../models';
 import {CollectionRepository} from '../repositories';
 import {authenticate} from '@loopback/authentication';
+import { HttpError } from '../utils/http-error';
 
 //* This decorator protects the API and the endpoints of CategoryController
 @authenticate('jwt')
@@ -98,20 +99,39 @@ export class CollectionController {
   //   return this.collectionRepository.updateAll(collection, where);
   // }
 
-  @get('/collections/{id}')
-  @response(200, {
-    description: 'Collection model instance',
+  // @get('/collections/{id}')
+  // @response(200, {
+  //   description: 'Collection model instance',
+  //   content: {
+  //     'application/json': {
+  //       schema: getModelSchemaRef(Collection, {includeRelations: true}),
+  //     },
+  //   },
+  // })
+  // async findById(
+  //   @param.path.string('id') id: string,
+  //   @param.filter(Collection, {exclude: 'where'}) filter?: FilterExcludingWhere<Collection>
+  // ): Promise<Collection> {
+  //   return this.collectionRepository.findById(id, filter);
+  // }
+
+  @get('/collections/user/{id}')
+  @response(200,{
+    description: 'Get all collections of determinated user',
     content: {
       'application/json': {
-        schema: getModelSchemaRef(Collection, {includeRelations: true}),
-      },
-    },
+        ownerId: 'String'
+      }
+    }
   })
-  async findById(
-    @param.path.string('id') id: string,
-    @param.filter(Collection, {exclude: 'where'}) filter?: FilterExcludingWhere<Collection>
-  ): Promise<Collection> {
-    return this.collectionRepository.findById(id, filter);
+  async getUserCollections(
+    @param.path.string('id') userId: string
+  ): Promise<Collection[]>  {
+    const collections = await this.collectionRepository.find({where: {ownerId: userId}});
+    if (collections.length === 0) {
+      throw new HttpError(400, 'Thare aren`t any collection for this user.')
+    }
+    return collections;
   }
 
   @patch('/collections/{id}')
