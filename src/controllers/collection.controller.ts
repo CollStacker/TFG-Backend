@@ -12,7 +12,7 @@ import {
   get,
   getModelSchemaRef,
   patch,
-  put,
+  // put,
   del,
   requestBody,
   response,
