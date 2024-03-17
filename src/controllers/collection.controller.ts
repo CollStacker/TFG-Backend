@@ -1,7 +1,7 @@
 import {
-  Count,
-  CountSchema,
-  Filter,
+  // Count,
+  // CountSchema,
+  // Filter,
   FilterExcludingWhere,
   repository,
   Where,
@@ -50,53 +50,53 @@ export class CollectionController {
     return this.collectionRepository.create(collection);
   }
 
-  @get('/collections/count')
-  @response(200, {
-    description: 'Collection model count',
-    content: {'application/json': {schema: CountSchema}},
-  })
-  async count(
-    @param.where(Collection) where?: Where<Collection>,
-  ): Promise<Count> {
-    return this.collectionRepository.count(where);
-  }
+  // @get('/collections/count')
+  // @response(200, {
+  //   description: 'Collection model count',
+  //   content: {'application/json': {schema: CountSchema}},
+  // })
+  // async count(
+  //   @param.where(Collection) where?: Where<Collection>,
+  // ): Promise<Count> {
+  //   return this.collectionRepository.count(where);
+  // }
 
-  @get('/collections')
-  @response(200, {
-    description: 'Array of Collection model instances',
-    content: {
-      'application/json': {
-        schema: {
-          type: 'array',
-          items: getModelSchemaRef(Collection, {includeRelations: true}),
-        },
-      },
-    },
-  })
-  async find(
-    @param.filter(Collection) filter?: Filter<Collection>,
-  ): Promise<Collection[]> {
-    return this.collectionRepository.find(filter);
-  }
+  // @get('/collections')
+  // @response(200, {
+  //   description: 'Array of Collection model instances',
+  //   content: {
+  //     'application/json': {
+  //       schema: {
+  //         type: 'array',
+  //         items: getModelSchemaRef(Collection, {includeRelations: true}),
+  //       },
+  //     },
+  //   },
+  // })
+  // async find(
+  //   @param.filter(Collection) filter?: Filter<Collection>,
+  // ): Promise<Collection[]> {
+  //   return this.collectionRepository.find(filter);
+  // }
 
-  @patch('/collections')
-  @response(200, {
-    description: 'Collection PATCH success count',
-    content: {'application/json': {schema: CountSchema}},
-  })
-  async updateAll(
-    @requestBody({
-      content: {
-        'application/json': {
-          schema: getModelSchemaRef(Collection, {partial: true}),
-        },
-      },
-    })
-    collection: Collection,
-    @param.where(Collection) where?: Where<Collection>,
-  ): Promise<Count> {
-    return this.collectionRepository.updateAll(collection, where);
-  }
+  // @patch('/collections')
+  // @response(200, {
+  //   description: 'Collection PATCH success count',
+  //   content: {'application/json': {schema: CountSchema}},
+  // })
+  // async updateAll(
+  //   @requestBody({
+  //     content: {
+  //       'application/json': {
+  //         schema: getModelSchemaRef(Collection, {partial: true}),
+  //       },
+  //     },
+  //   })
+  //   collection: Collection,
+  //   @param.where(Collection) where?: Where<Collection>,
+  // ): Promise<Count> {
+  //   return this.collectionRepository.updateAll(collection, where);
+  // }
 
   @get('/collections/{id}')
   @response(200, {
@@ -132,16 +132,16 @@ export class CollectionController {
     await this.collectionRepository.updateById(id, collection);
   }
 
-  @put('/collections/{id}')
-  @response(204, {
-    description: 'Collection PUT success',
-  })
-  async replaceById(
-    @param.path.string('id') id: string,
-    @requestBody() collection: Collection,
-  ): Promise<void> {
-    await this.collectionRepository.replaceById(id, collection);
-  }
+  // @put('/collections/{id}')
+  // @response(204, {
+  //   description: 'Collection PUT success',
+  // })
+  // async replaceById(
+  //   @param.path.string('id') id: string,
+  //   @requestBody() collection: Collection,
+  // ): Promise<void> {
+  //   await this.collectionRepository.replaceById(id, collection);
+  // }
 
   @del('/collections/{id}')
   @response(204, {
