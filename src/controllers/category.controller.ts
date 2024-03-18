@@ -2,7 +2,7 @@ import {
   // Count,
   // CountSchema,
   // Filter,
-  FilterExcludingWhere,
+  // FilterExcludingWhere,
   repository,
   // Where,
 } from '@loopback/repository';
@@ -98,21 +98,21 @@ export class CategoryController {
   //   return this.categoryRepository.updateAll(category, where);
   // }
 
-  @get('/categories/{id}')
-  @response(200, {
-    description: 'Category model instance',
-    content: {
-      'application/json': {
-        schema: getModelSchemaRef(Category, {includeRelations: true}),
-      },
-    },
-  })
-  async findById(
-    @param.path.string('id') id: string,
-    @param.filter(Category, {exclude: 'where'}) filter?: FilterExcludingWhere<Category>
-  ): Promise<Category> {
-    return this.categoryRepository.findById(id, filter);
-  }
+  // @get('/categories/{id}')
+  // @response(200, {
+  //   description: 'Category model instance',
+  //   content: {
+  //     'application/json': {
+  //       schema: getModelSchemaRef(Category, {includeRelations: true}),
+  //     },
+  //   },
+  // })
+  // async findById(
+  //   @param.path.string('id') id: string,
+  //   @param.filter(Category, {exclude: 'where'}) filter?: FilterExcludingWhere<Category>
+  // ): Promise<Category> {
+  //   return this.categoryRepository.findById(id, filter);
+  // }
 
   @get('categories/bycollection/{id}')
   @response(200, {
