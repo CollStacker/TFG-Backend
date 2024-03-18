@@ -114,6 +114,25 @@ export class CategoryController {
     return this.categoryRepository.findById(id, filter);
   }
 
+  @get('categories/bycollection/{id}')
+  @response(200, {
+    description: 'Get all categories of determinated collection',
+    content: {
+      'application/json': {
+        collectionId: 'string'
+      }
+    }
+  })
+  async getCollectionCategories(
+    @param.path.string('id') id: string
+  ): Promise<Category[] | null> {
+    const collectionCategories = await this.categoryRepository.find({where: {collectionId:id}});
+    if (collectionCategories.length === 0) {
+      return null
+    }
+    else return collectionCategories;
+  }
+
   // @patch('/categories/{id}')
   // @response(204, {
   //   description: 'Category PATCH success',
