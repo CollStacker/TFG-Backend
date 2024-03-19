@@ -116,21 +116,27 @@ export class CollectionController {
   // }
 
   @get('/collections/user/{id}')
-  @response(200,{
-    description: 'Get all collections of determinated user',
+  @response(200, {
+    description: 'Get all collections of a determined user',
     content: {
       'application/json': {
-        ownerId: 'String'
-      }
-    }
+        schema: {
+          type: 'object',
+          properties: {
+            ownerId: {
+              type: 'string',
+            },
+          },
+        },
+      },
+    },
   })
   async getUserCollections(
     @param.path.string('id') userId: string
-  ): Promise<Collection[] | null>  {
+  ): Promise<Collection[] | null> {
     const collections = await this.collectionRepository.find({where: {ownerId: userId}});
     if (collections.length === 0) {
-      // throw new HttpError(400, 'Thare aren`t any collection for this user.')
-      return null
+      return null;
     }
     return collections;
   }
