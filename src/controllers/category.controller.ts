@@ -116,21 +116,29 @@ export class CategoryController {
 
   @get('categories/bycollection/{id}')
   @response(200, {
-    description: 'Get all categories of determinated collection',
+    description: 'Get all categories of a determined collection',
     content: {
       'application/json': {
-        collectionId: 'string'
-      }
-    }
+        schema: {
+          type: 'object',
+          properties: {
+            collectionId: {
+              type: 'string',
+            },
+          },
+        },
+      },
+    },
   })
   async getCollectionCategories(
     @param.path.string('id') id: string
   ): Promise<Category[] | null> {
-    const collectionCategories = await this.categoryRepository.find({where: {collectionId:id}});
+    const collectionCategories = await this.categoryRepository.find({where: {collectionId: id}});
     if (collectionCategories.length === 0) {
-      return null
+      return null;
+    } else {
+      return collectionCategories;
     }
-    else return collectionCategories;
   }
 
   // @patch('/categories/{id}')
