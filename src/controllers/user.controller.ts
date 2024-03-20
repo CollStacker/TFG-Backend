@@ -29,14 +29,17 @@ import {FriendsController} from './friends.controller'
 import {parseFriendRequestBody} from '../utils/utilities'
 import { UserCredentials } from '../interfaces/userCredentials.interface';
 import { CollectionController } from './collection.controller'
+import { ProductController } from './product.controller'
 
 export class UserController {
   constructor(
     //Friend controller
     @inject('controllers.FriendsController')
     protected friendsController: FriendsController,
-    @inject('controllers.FriendsController')
-    protected collectionsController: CollectionController,
+    @inject('controllers.CollectionController')
+    protected collectionController: CollectionController,
+    @inject('controllers.ProductController')
+    protected productController: ProductController,
     @inject(TokenServiceBindings.TOKEN_SERVICE)
     public jwtService: TokenService,
     @inject(UserServiceBindings.USER_SERVICE)
@@ -152,20 +155,28 @@ export class UserController {
   @authenticate('jwt')
   @del('/user/{id}')
   @response(204, {
-    description: 'User account DELETE succes.',
+    description: 'User account DELETE success.',
   })
   async deleteUser(@param.path.string('id') id: string): Promise<void> {
     // Delete user from Friend table
     await this.friendsController.deleteUserEntry(id);
-    // Delete all user products inside his collections
-    const collections = await this.collectionsController.getUserCollections(id);
+    const collections = await this.collectionController.getUserCollections(id);
     if (collections) {
       for (const collection of collections) {
-        if (collection._id)
-          await this.collectionsController.deleteById(collection._id);
+        if (collection._id) {
+          // Delete all products of determinated collection
+          const collectionProducts = await this.productController.getCollectionProducts(collection._id);
+          if (collectionProducts) {
+            for (const product of collectionProducts) {
+              if (product._id)
+                await this.productController.deleteById(product._id)
+            }
+          }
+          // Delete all user products inside his collections
+          await this.collectionController.deleteById(collection._id);
+        }
       }
     }
-    // Delete all user collections
     // Finally Delete user
     await this.userRepository.deleteById(id)
   }

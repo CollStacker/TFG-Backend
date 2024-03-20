@@ -66,7 +66,7 @@ export class ProductController {
       },
     },
   })
-  async findById(
+  async getCollectionProducts(
     @param.path.string('id') id: string
   ): Promise<Product[] | null> {
     const collectionProducts = await this.productRepository.find({where: {collectionId: id}});
