@@ -1,10 +1,10 @@
 import {
-  Count,
-  CountSchema,
-  Filter,
-  FilterExcludingWhere,
+  // Count,
+  // CountSchema,
+  // Filter,
+  // FilterExcludingWhere,
   repository,
-  Where,
+  // Where,
 } from '@loopback/repository';
 import {
   post,
@@ -12,7 +12,7 @@ import {
   get,
   getModelSchemaRef,
   patch,
-  put,
+  // put,
   del,
   requestBody,
   response,
@@ -26,7 +26,7 @@ import {authenticate} from '@loopback/authentication';
 export class ProductController {
   constructor(
     @repository(ProductRepository)
-    public productRepository : ProductRepository,
+    public productRepository: ProductRepository,
   ) {}
 
   @post('/products')
@@ -50,69 +50,95 @@ export class ProductController {
     return this.productRepository.create(product);
   }
 
-  @get('/products/count')
-  @response(200, {
-    description: 'Product model count',
-    content: {'application/json': {schema: CountSchema}},
-  })
-  async count(
-    @param.where(Product) where?: Where<Product>,
-  ): Promise<Count> {
-    return this.productRepository.count(where);
-  }
-
-  @get('/products')
-  @response(200, {
-    description: 'Array of Product model instances',
-    content: {
-      'application/json': {
-        schema: {
-          type: 'array',
-          items: getModelSchemaRef(Product, {includeRelations: true}),
-        },
-      },
-    },
-  })
-  async find(
-    @param.filter(Product) filter?: Filter<Product>,
-  ): Promise<Product[]> {
-    return this.productRepository.find(filter);
-  }
-
-  @patch('/products')
-  @response(200, {
-    description: 'Product PATCH success count',
-    content: {'application/json': {schema: CountSchema}},
-  })
-  async updateAll(
-    @requestBody({
-      content: {
-        'application/json': {
-          schema: getModelSchemaRef(Product, {partial: true}),
-        },
-      },
-    })
-    product: Product,
-    @param.where(Product) where?: Where<Product>,
-  ): Promise<Count> {
-    return this.productRepository.updateAll(product, where);
-  }
-
-  @get('/products/{id}')
+  @get('/products/byCollectionId/{id}')
   @response(200, {
     description: 'Product model instance',
     content: {
       'application/json': {
-        schema: getModelSchemaRef(Product, {includeRelations: true}),
+        schema: {
+          type: 'object',
+          properties: {
+            collectionId: {
+              type: 'string',
+            },
+          },
+        },
       },
     },
   })
   async findById(
-    @param.path.string('id') id: string,
-    @param.filter(Product, {exclude: 'where'}) filter?: FilterExcludingWhere<Product>
-  ): Promise<Product> {
-    return this.productRepository.findById(id, filter);
+    @param.path.string('id') id: string
+  ): Promise<Product[] | null> {
+    const collectionProducts = await this.productRepository.find({where: {collectionId: id}});
+    if (collectionProducts.length === 0) {
+      return null;
+    }
+    return collectionProducts;
   }
+
+  // @get('/products/count')
+  // @response(200, {
+  //   description: 'Product model count',
+  //   content: {'application/json': {schema: CountSchema}},
+  // })
+  // async count(
+  //   @param.where(Product) where?: Where<Product>,
+  // ): Promise<Count> {
+  //   return this.productRepository.count(where);
+  // }
+
+  // @get('/products')
+  // @response(200, {
+  //   description: 'Array of Product model instances',
+  //   content: {
+  //     'application/json': {
+  //       schema: {
+  //         type: 'array',
+  //         items: getModelSchemaRef(Product, {includeRelations: true}),
+  //       },
+  //     },
+  //   },
+  // })
+  // async find(
+  //   @param.filter(Product) filter?: Filter<Product>,
+  // ): Promise<Product[]> {
+  //   return this.productRepository.find(filter);
+  // }
+
+  // @patch('/products')
+  // @response(200, {
+  //   description: 'Product PATCH success count',
+  //   content: {'application/json': {schema: CountSchema}},
+  // })
+  // async updateAll(
+  //   @requestBody({
+  //     content: {
+  //       'application/json': {
+  //         schema: getModelSchemaRef(Product, {partial: true}),
+  //       },
+  //     },
+  //   })
+  //   product: Product,
+  //   @param.where(Product) where?: Where<Product>,
+  // ): Promise<Count> {
+  //   return this.productRepository.updateAll(product, where);
+  // }
+
+  // @get('/products/{id}')
+  // @response(200, {
+  //   description: 'Product model instance',
+  //   content: {
+  //     'application/json': {
+  //       schema: getModelSchemaRef(Product, {includeRelations: true}),
+  //     },
+  //   },
+  // })
+  // async findById(
+  //   @param.path.string('id') id: string,
+  //   @param.filter(Product, {exclude: 'where'}) filter?: FilterExcludingWhere<Product>
+  // ): Promise<Product> {
+  //   return this.productRepository.findById(id, filter);
+  // }
 
   @patch('/products/{id}')
   @response(204, {
@@ -132,16 +158,16 @@ export class ProductController {
     await this.productRepository.updateById(id, product);
   }
 
-  @put('/products/{id}')
-  @response(204, {
-    description: 'Product PUT success',
-  })
-  async replaceById(
-    @param.path.string('id') id: string,
-    @requestBody() product: Product,
-  ): Promise<void> {
-    await this.productRepository.replaceById(id, product);
-  }
+  // @put('/products/{id}')
+  // @response(204, {
+  //   description: 'Product PUT success',
+  // })
+  // async replaceById(
+  //   @param.path.string('id') id: string,
+  //   @requestBody() product: Product,
+  // ): Promise<void> {
+  //   await this.productRepository.replaceById(id, product);
+  // }
 
   @del('/products/{id}')
   @response(204, {
