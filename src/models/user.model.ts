@@ -47,13 +47,11 @@ export class UserModel extends Entity {
 
   @property({
     type: 'string',
-    required: true,
   })
   profilePhoto: string;
 
   @property({
     type: 'string',
-    required: true,
   })
   biography: string;
 
