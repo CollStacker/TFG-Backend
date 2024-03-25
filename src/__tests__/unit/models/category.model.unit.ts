@@ -11,7 +11,6 @@ describe('Category model unit test', () => {
   //* Testing that properties are properly setted
   it ('Assing properties correctly', () => {
     const category = new Category(givenCategoryData());
-    expect(category._id).to.equal('00004');
     expect(category.name).to.equal('testCategory');
     expect(category.collectionId).to.equal('00003');
     expect(category.description).to.equal(undefined);

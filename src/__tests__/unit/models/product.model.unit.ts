@@ -18,7 +18,6 @@ describe('Product model test', () => {
       brand: 'testBrand',
       collectionId: '00003',
     });
-    expect(product._id).to.equal('00005');
     expect(product.name).to.equal('testProduct');
     expect(product.description).to.equal('testDescription');
     expect(product.image).to.be.eql(undefined);

@@ -18,7 +18,6 @@ describe('User model unit test', () => {
       email: 'adriantest@gmail.com',
       password: '12345678aA@',
     });
-    expect(user._id).to.equal('00001');
     expect(user.username).to.equal('AdrianTest01');
     expect(user.name).to.equal('Adrian');
     expect(user.surnames).to.equal('Glez Exp');

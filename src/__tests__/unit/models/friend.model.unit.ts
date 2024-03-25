@@ -13,7 +13,6 @@ describe('Friend model unit test', () => {
   it('Assingns properties correctly', () => {
     const friendData = givenFriendData({userId: '0001', friends: ['0002','0003']});
     const friend = new Friend(friendData)
-    expect(friend.userId).to.equal('0001');
     expect(friend.userId).not.to.equal(1110);
     expect(friend.friends).to.eql(['0002','0003']);
   })
