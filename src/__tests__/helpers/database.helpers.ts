@@ -15,7 +15,7 @@ export async function givenEmptyDatabase() {
 export function givenUserData(data?: Partial<UserModel>) {
   return Object.assign(
     {
-      _id: '00001',
+      // _id: '00001',
       username: 'AdrianTest01',
       name: 'Adrian',
       surnames: 'Glez Exp',
@@ -34,7 +34,7 @@ export async function givenUser(data?: Partial<UserModel>) {
 export function givenFriendData(data?: Partial<Friend>) {
   return Object.assign(
     {
-      _id: '00002',
+      // _id: '00002',
       userId: '00001'
     },
     data,
@@ -49,7 +49,7 @@ export async function givenFriend(data?: Partial<Friend>) {
 export function givenCollectionData(data?: Partial<Collection>) {
   return Object.assign(
     {
-      _id: '00003',
+      // _id: '00003',
       title: 'testCollection',
       ownerId: '00001'
     },
@@ -65,7 +65,7 @@ export async function givenCollection(data?: Partial<Collection>) {
 export function givenCategoryData(data?: Partial<Category>) {
   return Object.assign(
     {
-      _id: '00004',
+      // _id: '00004',
       name: 'testCategory',
       collectionId: '00003'
     },
@@ -81,7 +81,7 @@ export async function givenCategory(data?: Partial<Category>) {
 export function givenProductData(data?: Partial<Product>) {
   return Object.assign(
     {
-      _id: '00005',
+      // _id: '00005',
       name: 'testProduct',
       collectionId: '00003'
     },
