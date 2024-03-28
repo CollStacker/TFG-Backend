@@ -11,7 +11,7 @@ describe('Category repository unit test', () => {
   beforeEach(async () => {
     categoryRepository = new CategoryRepository(testdb);
     categoryData = {
-      _id: '1',
+      _id: '2',
       name: 'testCategory',
       collectionId: '2',
     };
@@ -66,7 +66,7 @@ describe('Category repository unit test', () => {
       const foundedDeleteCategory = await categoryRepository.findById(createdCategoryId);
       expect(foundedDeleteCategory).to.be.null();
     } catch (error) {
-      expect(error.message).to.equal('Entity not found: Category with id "4"');
+      expect(error.message).to.equal('Entity not found: Category with id "5"');
     }
   })
 });
