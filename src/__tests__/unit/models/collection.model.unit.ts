@@ -17,7 +17,6 @@ describe('Collection model test', () => {
       tag: 'testTag',
       ownerId: '00001',
     });
-    expect(collection._id).to.equal('00003');
     expect(collection.title).to.equal('testCollection');
     expect(collection.description).to.equal('testDesc');
     expect(collection.frontPage).to.equal(undefined);

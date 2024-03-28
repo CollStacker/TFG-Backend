@@ -114,7 +114,7 @@ export class CategoryController {
   //   return this.categoryRepository.findById(id, filter);
   // }
 
-  @get('categories/bycollection/{id}')
+  @get('/categories/bycollection/{id}')
   @response(200, {
     description: 'Get all categories of a determined collection',
     content: {

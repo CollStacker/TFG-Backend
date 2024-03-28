@@ -29,7 +29,7 @@ export class Category extends Entity {
   @property({
     type: 'string',
   })
-  parentId: string;
+  parentId?: string;
 
   constructor(data?: Partial<Category>) {
     super(data);
