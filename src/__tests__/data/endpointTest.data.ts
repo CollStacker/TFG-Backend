@@ -75,19 +75,28 @@ export const friendFirstExample = {
   toObject: Object
 }
 
-export const friendSecondExample = {
-  userId: '2',
-  friends: ['1','3']
+export const collectionFirstExample = {
+  title: 'testTitle',
+  description: 'testDesc',
+  tag: 'testTag',
+  frontPage: 'fp',
+  ownerId: '1'
 }
 
-export const friendThirdExample = {
-  userId: '3',
-  friends: ['2','1']
+export const collectionSecondExample = {
+  title: 'testTitle',
+  description: 'testDesc',
+  tag: 'testTag',
+  frontPage: 'fp',
+  ownerId: '1'
 }
 
-export const friendFourthExample = {
-  userId: '4',
-  friends: ['2','3'],
+export const collectionThirdExample = {
+  title: 'testTitle',
+  description: 'testDesc',
+  tag: 'testTag',
+  frontPage: 'fp',
+  ownerId: '2',
   getId: () => {},
   getIdObject: Object,
   toJSON: Object,

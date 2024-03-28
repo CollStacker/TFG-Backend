@@ -24,7 +24,6 @@ describe('Freinds controller test', () => {
 
   it('Create a friend entry', async () => {
     const createdFriend = await friendController.create(friendFirstExample);
-    console.log(createdFriend);
     const expectedResult = {
       _id : '1',
       userId: '1',
