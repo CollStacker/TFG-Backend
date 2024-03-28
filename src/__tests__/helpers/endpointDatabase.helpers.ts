@@ -1,6 +1,6 @@
 import {ProductRepository, CategoryRepository, CollectionRepository, FriendRepository, UserRepository} from '../../repositories';
 import { endpointTestdb } from '../fixtures/datasources/endpointTestdb.datasource';
-import { Collection, Category } from '../../models';
+import { Collection, Category, Product } from '../../models';
 
 export async function givenEmptyEndpointDatabase() {
   await new ProductRepository(endpointTestdb).deleteAll();
@@ -40,4 +40,20 @@ export function givenCategoryData(data?: Partial<Category>) {
 
 export async function givenCategory(data?: Partial<Category>) {
   return new CategoryRepository(endpointTestdb).create(givenCategoryData(data));
+}
+
+//* 5. Product
+export function givenProductData(data?: Partial<Product>) {
+  return Object.assign(
+    {
+      // _id: '00005',
+      name: 'testProduct',
+      collectionId: '00003'
+    },
+    data,
+  );
+}
+
+export async function givenProduct(data?: Partial<Product>) {
+  return new ProductRepository(endpointTestdb).create(givenProductData(data));
 }

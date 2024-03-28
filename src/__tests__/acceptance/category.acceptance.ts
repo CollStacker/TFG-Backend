@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 // import {CollStacker} from '../..';
 // import {endpointTestdb} from '../fixtures/datasources/endpointTestdb.datasource';
 // import {Client, createRestAppClient, expect} from '@loopback/testlab';
