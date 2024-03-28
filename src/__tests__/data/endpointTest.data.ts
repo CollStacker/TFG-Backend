@@ -65,3 +65,31 @@ export const productFourthExample = {
   toJSON: Object,
   toObject: Object
 }
+
+export const friendFirstExample = {
+  userId: '1',
+  friends: ['2','3'],
+  getId: () => {},
+  getIdObject: Object,
+  toJSON: Object,
+  toObject: Object
+}
+
+export const friendSecondExample = {
+  userId: '2',
+  friends: ['1','3']
+}
+
+export const friendThirdExample = {
+  userId: '3',
+  friends: ['2','1']
+}
+
+export const friendFourthExample = {
+  userId: '4',
+  friends: ['2','3'],
+  getId: () => {},
+  getIdObject: Object,
+  toJSON: Object,
+  toObject: Object
+}
