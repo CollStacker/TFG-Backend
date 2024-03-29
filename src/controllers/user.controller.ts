@@ -17,19 +17,23 @@ import {
   del,
   response,
   param,
-  patch
+  patch,
 } from '@loopback/rest';
 import {SecurityBindings, securityId, UserProfile} from '@loopback/security';
 import {genSalt, hash} from 'bcryptjs';
-import { NewUserRequest } from '../models/user.model';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/naming-convention
+import {NewUserRequest} from '../models/user.model';
+// eslint-disable-next-line @typescript-eslint/naming-convention
 import _ from 'lodash';
-import { CredentialsRequestBody } from '../utils/loginCredentials';
-import { FriendsController, CollectionController, ProductController } from '../controllers';
-import { HttpError } from '../utils/http-error';
-import { parseFriendRequestBody } from '../utils/utilities';
-import { compare } from 'bcrypt';
-import { UserRelevantData } from '../interfaces/userRelevantData.interface';
+import {CredentialsRequestBody} from '../utils/loginCredentials';
+import {
+  FriendsController,
+  CollectionController,
+  ProductController,
+} from '../controllers';
+import {HttpError} from '../utils/http-error';
+import {parseFriendRequestBody} from '../utils/utilities';
+import {compare} from 'bcrypt';
+import {UserRelevantData} from '../interfaces/userRelevantData.interface';
 
 export class UserController {
   constructor(
@@ -128,15 +132,18 @@ export class UserController {
     })
     newUserRequest: NewUserRequest,
   ): Promise<User> {
-
-    const existingEmail = await this.userRepository.findOne({where: {email: newUserRequest.email}}) // Checking if an user with same email exists in db
-    const existingUsername = await this.userRepository.findOne({where: {username: newUserRequest.username}})
+    const existingEmail = await this.userRepository.findOne({
+      where: {email: newUserRequest.email},
+    }); // Checking if an user with same email exists in db
+    const existingUsername = await this.userRepository.findOne({
+      where: {username: newUserRequest.username},
+    });
 
     if (existingEmail != null) {
-      throw new HttpError(400,'Correo electrónico no disponible.')
+      throw new HttpError(400, 'Correo electrónico no disponible.');
     }
     if (existingUsername != null) {
-      throw new HttpError(400,'Username no disponible.')
+      throw new HttpError(400, 'Username no disponible.');
     }
 
     const password = await hash(newUserRequest.password, await genSalt());
@@ -148,7 +155,7 @@ export class UserController {
     await this.userRepository.userCredentials(savedUser.id).create({password});
 
     //Saving UserId in Friend table
-    await this.friendsController.create(parseFriendRequestBody(savedUser.id))
+    await this.friendsController.create(parseFriendRequestBody(savedUser.id));
     return savedUser;
   }
 
@@ -165,11 +172,12 @@ export class UserController {
       for (const collection of collections) {
         if (collection._id) {
           // Delete all products of determinated collection
-          const collectionProducts = await this.productController.getCollectionProducts(collection._id);
+          const collectionProducts =
+            await this.productController.getCollectionProducts(collection._id);
           if (collectionProducts) {
             for (const product of collectionProducts) {
               if (product._id)
-                await this.productController.deleteById(product._id)
+                await this.productController.deleteById(product._id);
             }
           }
           // Delete all user products inside his collections
@@ -178,7 +186,7 @@ export class UserController {
       }
     }
     // Finally Delete user
-    await this.userRepository.deleteById(id)
+    await this.userRepository.deleteById(id);
   }
 
   @authenticate('jwt')
@@ -191,25 +199,33 @@ export class UserController {
           schema: {
             type: 'object',
             properties: {
-              currentPassword: { type: 'string' },
-              newPassword: { type: 'string' },
+              currentPassword: {type: 'string'},
+              newPassword: {type: 'string'},
             },
             required: ['currentPassword', 'newPassword'],
           },
         },
       },
     })
-    passwordData: { currentPassword: string, newPassword: string }
+    passwordData: {currentPassword: string; newPassword: string},
   ): Promise<void> {
-    const user = await this.userRepository.userCredentials(id).get()
+    const user = await this.userRepository.userCredentials(id).get();
 
-    const currentPasswordCorrect = await compare(passwordData.currentPassword, user.password);
+    const currentPasswordCorrect = await compare(
+      passwordData.currentPassword,
+      user.password,
+    );
     if (!currentPasswordCorrect) {
       throw new HttpError(401, 'Contraseña actual incorrecta');
     }
 
-    const encryptedNewPassword = await hash(passwordData.newPassword, await genSalt());
-    await this.userRepository.userCredentials(id).patch({password: encryptedNewPassword});
+    const encryptedNewPassword = await hash(
+      passwordData.newPassword,
+      await genSalt(),
+    );
+    await this.userRepository
+      .userCredentials(id)
+      .patch({password: encryptedNewPassword});
   }
 
   @authenticate('jwt')
@@ -218,7 +234,7 @@ export class UserController {
     description: 'Acces to user relevant data.',
   })
   async getUserRelevantData(
-    @param.path.string('id') id:string,
+    @param.path.string('id') id: string,
   ): Promise<UserRelevantData> {
     const user = await this.userRepository.findById(id);
     const relevantData: UserRelevantData = {
@@ -227,8 +243,8 @@ export class UserController {
       name: user.name,
       surnames: user.usernames,
       biography: user.biography,
-      profilePhoto: user.profilePhoto
-    }
+      profilePhoto: user.profilePhoto,
+    };
     return relevantData;
   }
 }

@@ -1,4 +1,3 @@
-export * from './ping.controller';
 export * from './category.controller';
 export * from './friends.controller';
 export * from './product.controller';
