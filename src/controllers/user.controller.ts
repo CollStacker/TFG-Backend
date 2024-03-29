@@ -1,10 +1,10 @@
 import {authenticate, TokenService} from '@loopback/authentication';
 import {
-  //Credentials,
+  Credentials,
   MyUserService,
   TokenServiceBindings,
-  //User,
-  // UserRepository,
+  User,
+  UserRepository,
   UserServiceBindings,
 } from '@loopback/authentication-jwt';
 import {inject} from '@loopback/core';
@@ -13,27 +13,23 @@ import {
   get,
   getModelSchemaRef,
   post,
-  del,
-  param,
-  response,
   requestBody,
+  del,
+  response,
+  param
 } from '@loopback/rest';
 import {SecurityBindings, securityId, UserProfile} from '@loopback/security';
 import {genSalt, hash} from 'bcryptjs';
-import lodash from 'lodash';
-import {UserModel} from '../models';
-import { UserRepository } from '../repositories/user.repository';
+import { NewUserRequest } from '../models/user.model';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/naming-convention
+import _ from 'lodash';
+import { CredentialsRequestBody } from '../utils/loginCredentials';
+import { FriendsController, CollectionController, ProductController } from '../controllers';
 import { HttpError } from '../utils/http-error';
-import {CredentialsRequestBody} from '../utils/loginCredentials'
-import {FriendsController} from './friends.controller'
-import {parseFriendRequestBody} from '../utils/utilities'
-import { UserCredentials } from '../interfaces/userCredentials.interface';
-import { CollectionController } from './collection.controller'
-import { ProductController } from './product.controller'
+import { parseFriendRequestBody } from '../utils/utilities';
 
 export class UserController {
   constructor(
-    //Friend controller
     @inject('controllers.FriendsController')
     protected friendsController: FriendsController,
     @inject('controllers.CollectionController')
@@ -69,12 +65,12 @@ export class UserController {
     },
   })
   async login(
-    @requestBody(CredentialsRequestBody) credentials: UserCredentials,
+    @requestBody(CredentialsRequestBody) credentials: Credentials,
   ): Promise<{token: string}> {
     // ensure the user exists, and the password is correct
-    const user = await this.userRepository.verifyCredentials(credentials);
+    const user = await this.userService.verifyCredentials(credentials);
     // convert a User object into a UserProfile object (reduced set of properties)
-    const userProfile = this.userRepository.convertToUserProfile(user)
+    const userProfile = this.userService.convertToUserProfile(user);
 
     // create a JSON Web Token based on the user profile
     const token = await this.jwtService.generateToken(userProfile);
@@ -110,7 +106,7 @@ export class UserController {
         content: {
           'application/json': {
             schema: {
-              'x-ts-type': UserModel,
+              'x-ts-type': User,
             },
           },
         },
@@ -121,34 +117,35 @@ export class UserController {
     @requestBody({
       content: {
         'application/json': {
-          schema: getModelSchemaRef(UserModel, {
+          schema: getModelSchemaRef(NewUserRequest, {
             title: 'NewUser',
-            exclude: ['_id'],
           }),
         },
       },
     })
-    newUserRequest: UserModel,
-  ): Promise<UserModel> {
+    newUserRequest: NewUserRequest,
+  ): Promise<User> {
 
-    const existingUser = await this.userRepository.findOne({where: {email: newUserRequest.email}}) // Checking if an user with same email exists in db
+    const existingEmail = await this.userRepository.findOne({where: {email: newUserRequest.email}}) // Checking if an user with same email exists in db
+    const existingUsername = await this.userRepository.findOne({where: {username: newUserRequest.username}})
 
-    if (existingUser != null) {
-      throw new HttpError(400,'Correo electrónico ya existente.')
+    if (existingEmail != null) {
+      throw new HttpError(400,'Correo electrónico no disponible.')
+    }
+    if (existingUsername != null) {
+      throw new HttpError(400,'Username no disponible.')
     }
 
+    const password = await hash(newUserRequest.password, await genSalt());
+    const savedUser = await this.userRepository.create(
+      _.omit(newUserRequest, 'password'),
+    );
+    // console.log(savedUser);
 
-    const password = await hash(newUserRequest.password, await genSalt());  // Encrypting password
-
-    newUserRequest.password = password;// Seting hashed password
-
-    const savedUser: UserModel = await this.userRepository.create(
-      lodash.omit(newUserRequest, '_id'),
-      );
+    await this.userRepository.userCredentials(savedUser.id).create({password});
 
     //Saving UserId in Friend table
-    await this.friendsController.create(parseFriendRequestBody(savedUser._id))
-
+    await this.friendsController.create(parseFriendRequestBody(savedUser.id))
     return savedUser;
   }
 
@@ -181,3 +178,5 @@ export class UserController {
     await this.userRepository.deleteById(id)
   }
 }
+
+

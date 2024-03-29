@@ -1,4 +1,4 @@
-import {ProductRepository, CategoryRepository, CollectionRepository, FriendRepository, UserRepository, ProductFieldRepository} from '../../repositories';
+import {ProductRepository, CategoryRepository, CollectionRepository, FriendRepository, /*UserRepository,*/ ProductFieldRepository} from '../../repositories';
 import { endpointTestdb } from '../fixtures/datasources/endpointTestdb.datasource';
 import { Collection, Category, Product, Friend, ProductField } from '../../models';
 
@@ -7,7 +7,7 @@ export async function givenEmptyEndpointDatabase() {
   await new CategoryRepository(endpointTestdb).deleteAll();
   await new CollectionRepository(endpointTestdb).deleteAll();
   await new FriendRepository(endpointTestdb).deleteAll();
-  await new UserRepository(endpointTestdb).deleteAll();
+  // await new UserRepository(endpointTestdb).deleteAll();
 }
 
 //* 2. Friend
