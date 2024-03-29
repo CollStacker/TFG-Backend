@@ -1,5 +1,5 @@
-import {ProductRepository, CategoryRepository, CollectionRepository, FriendRepository, UserRepository} from '../../repositories';
-import {Product, Category, Collection, Friend, UserModel} from '../../models'
+import {ProductRepository, CategoryRepository, CollectionRepository, FriendRepository, UserRepository, ProductFieldRepository} from '../../repositories';
+import {Product, Category, Collection, Friend, UserModel, ProductField} from '../../models'
 import {testdb} from '../fixtures/datasources/testdb.datasource';
 
 export async function givenEmptyDatabase() {
@@ -8,6 +8,7 @@ export async function givenEmptyDatabase() {
   await new CollectionRepository(testdb).deleteAll();
   await new FriendRepository(testdb).deleteAll();
   await new UserRepository(testdb).deleteAll();
+  await new ProductFieldRepository(testdb).deleteAll();
 }
 
 //* GIVING DATA TO THE TEST DATABASE
@@ -91,4 +92,20 @@ export function givenProductData(data?: Partial<Product>) {
 
 export async function givenProduct(data?: Partial<Product>) {
   return new ProductRepository(testdb).create(givenProductData(data));
+}
+
+//* 6. Product-Field
+export function givenProductFieldData(data?: Partial<ProductField>) {
+  return Object.assign(
+    {
+      key: 'key',
+      value: 'value',
+      type: 'type',
+    },
+    data,
+  );
+}
+
+export async function givenProductField(data?: Partial<ProductField>) {
+  return new ProductFieldRepository(testdb).create(givenProductData(data));
 }
