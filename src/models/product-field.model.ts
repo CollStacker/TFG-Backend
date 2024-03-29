@@ -30,7 +30,8 @@ export class ProductField extends Entity {
     type: 'string',
     required: true,
   })
-  productId: string
+  productId: String;
+
 
   constructor(data?: Partial<ProductField>) {
     super(data);
