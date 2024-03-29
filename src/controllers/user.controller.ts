@@ -16,7 +16,8 @@ import {
   requestBody,
   del,
   response,
-  param
+  param,
+  patch
 } from '@loopback/rest';
 import {SecurityBindings, securityId, UserProfile} from '@loopback/security';
 import {genSalt, hash} from 'bcryptjs';
@@ -27,6 +28,7 @@ import { CredentialsRequestBody } from '../utils/loginCredentials';
 import { FriendsController, CollectionController, ProductController } from '../controllers';
 import { HttpError } from '../utils/http-error';
 import { parseFriendRequestBody } from '../utils/utilities';
+import { compare } from 'bcrypt';
 
 export class UserController {
   constructor(
@@ -177,6 +179,35 @@ export class UserController {
     // Finally Delete user
     await this.userRepository.deleteById(id)
   }
+
+  @authenticate('jwt')
+  @patch('/changePassword/{id}')
+  async changePassword(
+    @param.path.string('id') id: string,
+    @requestBody({
+      content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            properties: {
+              currentPassword: { type: 'string' },
+              newPassword: { type: 'string' },
+            },
+            required: ['currentPassword', 'newPassword'],
+          },
+        },
+      },
+    })
+    passwordData: { currentPassword: string, newPassword: string }
+  ): Promise<void> {
+    const user = await this.userRepository.userCredentials(id).get()
+
+    const currentPasswordCorrect = await compare(passwordData.currentPassword, user.password);
+    if (!currentPasswordCorrect) {
+      throw new HttpError(401, 'Contraseña actual incorrecta');
+    }
+
+    const encryptedNewPassword = await hash(passwordData.newPassword, await genSalt());
+    await this.userRepository.userCredentials(id).patch({password: encryptedNewPassword});
+  }
 }
-
-
