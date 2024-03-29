@@ -108,5 +108,5 @@ export function givenProductFieldData(data?: Partial<ProductField>) {
 }
 
 export async function givenProductField(data?: Partial<ProductField>) {
-  return new ProductFieldRepository(testdb).create(givenProductData(data));
+  return new ProductFieldRepository(testdb).create(givenProductFieldData(data));
 }

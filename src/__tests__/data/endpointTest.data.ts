@@ -102,3 +102,28 @@ export const collectionThirdExample = {
   toJSON: Object,
   toObject: Object
 }
+
+export const productFieldFirstExample = {
+  key: 'testKey1',
+  value: 'testValue',
+  type: 'testType',
+  productId: '2',
+  getId: () => {},
+  getIdObject: Object,
+  toJSON: Object,
+  toObject: Object
+}
+
+export const productFieldSecondExample = {
+  key: 'testKey2',
+  value: 'testValue',
+  type: 'testType',
+  productId: '1'
+}
+
+export const productFieldThirdExample = {
+  key: 'testKey3',
+  value: 'testValue',
+  type: 'testType',
+  productId: '1'
+}

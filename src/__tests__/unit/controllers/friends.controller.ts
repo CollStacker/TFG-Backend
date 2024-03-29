@@ -9,7 +9,7 @@ import {
 } from '../../data/endpointTest.data';
 
 
-describe('Freinds controller test', () => {
+describe('Friends controller test', () => {
   let friendController: FriendsController;
   let friendRepository: FriendRepository;
 

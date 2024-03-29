@@ -4,6 +4,11 @@ import {expect} from '@loopback/testlab';
 
 describe('ProductField model unit test', () => {
   //* Test to verify that one productField instance can be created properly
+
+  after(async () => {
+    
+  })
+
   it('Create an instance of productField', () => {
     const productField = new ProductField(givenProductFieldData());
     expect(productField).to.be.instanceOf(ProductField)
