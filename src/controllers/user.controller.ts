@@ -29,6 +29,7 @@ import { FriendsController, CollectionController, ProductController } from '../c
 import { HttpError } from '../utils/http-error';
 import { parseFriendRequestBody } from '../utils/utilities';
 import { compare } from 'bcrypt';
+import { UserRelevantData } from '../interfaces/userRelevantData.interface';
 
 export class UserController {
   constructor(
@@ -209,5 +210,25 @@ export class UserController {
 
     const encryptedNewPassword = await hash(passwordData.newPassword, await genSalt());
     await this.userRepository.userCredentials(id).patch({password: encryptedNewPassword});
+  }
+
+  @authenticate('jwt')
+  @get('/userData/{id}')
+  @response(204, {
+    description: 'Acces to user relevant data.',
+  })
+  async getUserRelevantData(
+    @param.path.string('id') id:string,
+  ): Promise<UserRelevantData> {
+    const user = await this.userRepository.findById(id);
+    const relevantData: UserRelevantData = {
+      email: user.email,
+      username: user.username,
+      name: user.name,
+      surnames: user.usernames,
+      biography: user.biography,
+      profilePhoto: user.profilePhoto
+    }
+    return relevantData;
   }
 }
