@@ -101,6 +101,7 @@ export function givenProductFieldData(data?: Partial<ProductField>) {
       key: 'key',
       value: 'value',
       type: 'type',
+      productId: '1',
     },
     data,
   );

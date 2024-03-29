@@ -26,6 +26,11 @@ export class ProductField extends Entity {
   })
   type?: string;
 
+  @property({
+    type: 'string',
+    required: true,
+  })
+  productId: string
 
   constructor(data?: Partial<ProductField>) {
     super(data);

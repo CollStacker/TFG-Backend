@@ -11,7 +11,7 @@ describe('ProductField model unit test', () => {
 
   //* Test to verify that properties are properly setted to user model
   it('Assingns properties correctly', () => {
-    const productFieldData = givenProductFieldData({key: 'newKey', value: 'newValue', type: 'newtype'});
+    const productFieldData = givenProductFieldData({key: 'newKey', value: 'newValue', type: 'newtype',productId: '1',});
     const productField = new ProductField(productFieldData)
     expect(productField.key).not.to.equal('key');
     expect(productField.value).to.eql('newValue');
@@ -19,7 +19,7 @@ describe('ProductField model unit test', () => {
 
   //* Testing that _id property is created authomatic by mongodb
   it('Does not generate _id property', () => {
-    const productField = new ProductField({key: 'newKey', value: 'newValue', type: 'newtype'});
+    const productField = new ProductField({key: 'newKey', value: 'newValue', type: 'newtype',productId: '1',});
     expect(productField._id).to.equal(undefined);
   });
 })
