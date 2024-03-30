@@ -345,17 +345,60 @@ export class FriendsController {
           schema: {
             type: 'object',
             properties: {
-              currentUserUsername: {type: 'string'},
-              newFriendUsername: {type: 'string'},
+              currentUserId: {type: 'string'},
+              friendUsername: {type: 'string'},
             },
-            required: ['currentUserUsername', 'newFriendUsername'],
+            required: ['currentUserId', 'friendUsername'],
           },
         },
       },
     })
-    friendshipRequestBody: {currentUserUsername: string, newFriendUsername: string}
+    friendshipRequestBody: {currentUserId: string, friendUsername: string}
   ): Promise<void> {
+    //* Data
+    const currentUserFriendshipData = await this.friendRepository.findOne({where: { userId: friendshipRequestBody.currentUserId}});
+    if (!currentUserFriendshipData) {
+      throw new HttpError(401, 'There are not any user with that id');
+    }
+    const currentUserData = await this.userRepository.findById(friendshipRequestBody.currentUserId);
 
+    const userToDelete = await this.userRepository.findOne({where: {username: friendshipRequestBody.friendUsername}});
+    if (!userToDelete) {
+      throw new HttpError(401, `There are not any user with username: ${userToDelete}`)
+    }
+    const userToDeleteFriendshipData = await this.friendRepository.findOne({where: {userId: userToDelete.id}});
+    if (!userToDeleteFriendshipData) {
+      throw new HttpError(401, `User ${userToDelete.username} not found`)
+    }
+
+    //* Delete friend from currentUser's friends list
+    const currentUserFriendList = currentUserFriendshipData.friends;
+    if (currentUserFriendList) {
+      const indexOfFriendToDelete = currentUserFriendList.indexOf(friendshipRequestBody.friendUsername);
+      if (indexOfFriendToDelete !== -1) {
+        currentUserFriendList.splice(indexOfFriendToDelete,1);
+      }
+    }
+    const newCurrentUserFriendlist = {
+      friends: currentUserFriendList
+    }
+    await this.friendRepository.updateById(currentUserFriendshipData._id,newCurrentUserFriendlist);
+
+    //* Delete
+    const deletedFriendFriendlist = userToDeleteFriendshipData.friends;
+    if (deletedFriendFriendlist) {
+      let indexOfCurrentUser: number;
+      /* Always comes in this conditional,but it's implemented becouse in the
+      User model (given by lb4), the property username is possibly to be null */
+      if(currentUserData.username) {
+        indexOfCurrentUser = deletedFriendFriendlist.indexOf(currentUserData.username);
+        deletedFriendFriendlist.splice(indexOfCurrentUser,1)
+      }
+    }
+    const newDeletedFriendFriendslist = {
+      friends: deletedFriendFriendlist,
+    }
+    await this.friendRepository.updateById(userToDeleteFriendshipData._id, newDeletedFriendFriendslist)
   }
 
   @get('/userFriends/{id}')
