@@ -11,7 +11,7 @@ import {
   param,
   get,
   getModelSchemaRef,
-  // patch,
+  patch,
   // put,
   del,
   requestBody,
@@ -114,23 +114,23 @@ export class FriendsController {
     return this.friendRepository.findById(id, filter);
   }
 
-  // @patch('/friends/{id}')
-  // @response(204, {
-  //   description: 'Friend PATCH success',
-  // })
-  // async updateById(
-  //   @param.path.string('id') id: string,
-  //   @requestBody({
-  //     content: {
-  //       'application/json': {
-  //         schema: getModelSchemaRef(Friend, {partial: true}),
-  //       },
-  //     },
-  //   })
-  //   friend: Friend,
-  // ): Promise<void> {
-  //   await this.friendRepository.updateById(id, friend);
-  // }
+  @patch('/friends/{id}')
+  @response(204, {
+    description: 'Friend PATCH success',
+  })
+  async updateById(
+    @param.path.string('id') id: string,
+    @requestBody({
+      content: {
+        'application/json': {
+          schema: getModelSchemaRef(Friend, {partial: true}),
+        },
+      },
+    })
+    friend: Friend,
+  ): Promise<void> {
+    await this.friendRepository.updateById(id, friend);
+  }
 
   // @put('/friends/{id}')
   // @response(204, {
@@ -172,17 +172,32 @@ export class FriendsController {
           schema: {
             type: 'object',
             properties: {
-              currentUserUsername: {type: 'string'},
-              newFriendUsername: {type: 'string'},
+              currentUserId: {type: 'string'},
+              newFriendId: {type: 'string'},
             },
-            required: ['currentUserUsername', 'newFriendUsername'],
+            required: ['currentUserId', 'newFriendId'],
           },
         },
       },
     })
-    friendshipRequestBody: {currentUserUsername: string, newFriendUsername: string}
+    friendshipRequestBody: {currentUserId: string, newFriendId: string}
   ): Promise<void> {
-
+    const currentUser = await this.friendRepository.find({where: {userId: friendshipRequestBody.currentUserId}});
+    const newFriend = await this.friendRepository.find({where: { userId: friendshipRequestBody.newFriendId}});
+    if (newFriend[0].friendshipRequestList) {
+      const newFriendRequestList = newFriend[0].friendshipRequestList;
+      newFriendRequestList.push(currentUser[0].userId);
+      const newFriendBody = {
+        friendshipRequestList: newFriendRequestList,
+      }
+      await this.friendRepository.updateById(newFriend[0]._id, newFriendBody)
+    } else {
+      const newFriendRequestList = [currentUser[0].userId];
+      const newFriendBody = {
+        friendshipRequestList: newFriendRequestList,
+      }
+      await this.friendRepository.updateById(newFriend[0]._id, newFriendBody)
+    }
   }
 
   @post('/acceptFriendshipRequest')
