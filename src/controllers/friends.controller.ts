@@ -165,11 +165,11 @@ export class FriendsController {
   }
 
 
-  @post('/sendFriendshipRequest')
+  @post('/sendFriendRequest')
   @response(204, {
-    description: 'Send friendship request',
+    description: 'Send friend request',
   })
-  async sendFriendshipRequest(
+  async sendFriendRequest(
     @requestBody({
       content: {
         'application/json': {
@@ -184,32 +184,32 @@ export class FriendsController {
         },
       },
     })
-    friendshipRequestBody: {currentUserId: string, newFriendId: string}
+    friendRequestBody: {currentUserId: string, newFriendId: string}
   ): Promise<void> {
-    const currentUser = await this.friendRepository.findOne({where: {userId: friendshipRequestBody.currentUserId}});
-    const newFriend = await this.friendRepository.findOne({where: { userId: friendshipRequestBody.newFriendId}});
+    const currentUser = await this.friendRepository.findOne({where: {userId: friendRequestBody.currentUserId}});
+    const newFriend = await this.friendRepository.findOne({where: { userId: friendRequestBody.newFriendId}});
     if ( currentUser && newFriend) { //? checking that data is defined properly
-      if (newFriend.friendshipRequestList) {
-        const newFriendRequestList = newFriend.friendshipRequestList;
+      if (newFriend.friendRequestList) {
+        const newFriendRequestList = newFriend.friendRequestList;
         newFriendRequestList.push(currentUser.userId);
         const newFriendBody = {
-          friendshipRequestList: newFriendRequestList,
+          friendRequestList: newFriendRequestList,
         }
         await this.friendRepository.updateById(newFriend._id, newFriendBody)
       } else {
         const newFriendBody = {
-          friendshipRequestList: [currentUser.userId],
+          friendRequestList: [currentUser.userId],
         }
         await this.friendRepository.updateById(newFriend._id, newFriendBody)
       }
     }
   }
 
-  @post('/acceptFriendshipRequest')
+  @post('/acceptFriendRequest')
   @response(204, {
-    description: 'Accept friendship request',
+    description: 'Accept friend request',
   })
-  async acceptFriendshipRequest(
+  async acceptFriendRequest(
     @requestBody({
       content: {
         'application/json': {
@@ -224,10 +224,10 @@ export class FriendsController {
         },
       },
     })
-    friendshipRequestBody: {currentUserId: string, newFriendUsername: string}
+    friendRequestBody: {currentUserId: string, newFriendUsername: string}
   ): Promise<void> {
     //* Data
-    const currentUser = await this.friendRepository.findOne({where: {userId: friendshipRequestBody.currentUserId}});
+    const currentUser = await this.friendRepository.findOne({where: {userId: friendRequestBody.currentUserId}});
     if(!currentUser) {
       throw new HttpError(401, 'There are no user with that userId')
     }
@@ -236,7 +236,7 @@ export class FriendsController {
       throw new HttpError(401, 'Wrong user data, property username cant be undefined')
     }
 
-    const applicantUser =  await this.userRepository.findOne({where: {username: friendshipRequestBody.newFriendUsername}})
+    const applicantUser =  await this.userRepository.findOne({where: {username: friendRequestBody.newFriendUsername}})
     if(!applicantUser) {
       throw new HttpError(401, 'There are no user with that username')
     }
@@ -246,28 +246,28 @@ export class FriendsController {
       throw new HttpError(401, 'There are no user with that userId')
     }
 
-    //* Subract applicant username from friendshipRequest array
-    const currentUserFriendshipList = currentUser.friendshipRequestList
-    const indexOfApplicantUser = currentUserFriendshipList?.indexOf(applicantUser.id)
-    if(indexOfApplicantUser !== -1 && currentUserFriendshipList && typeof indexOfApplicantUser === 'number') {
-      currentUserFriendshipList.splice(indexOfApplicantUser,1);
+    //* Subract applicant username from friendRequest array
+    const currentUserFriendsList = currentUser.friendRequestList
+    const indexOfApplicantUser = currentUserFriendsList?.indexOf(applicantUser.id)
+    if(indexOfApplicantUser !== -1 && currentUserFriendsList && typeof indexOfApplicantUser === 'number') {
+      currentUserFriendsList.splice(indexOfApplicantUser,1);
     } else {
-      throw new HttpError(401, 'Applicant user did not found in friendship request list.')
+      throw new HttpError(401, 'Applicant user did not found in friend request list.')
     }
 
     //* Insert new friend in current user friend list.
     if(currentUser?.friends) {
       const currentUserFriendList = currentUser.friends;
-      currentUserFriendList.push(friendshipRequestBody.newFriendUsername)
+      currentUserFriendList.push(friendRequestBody.newFriendUsername)
       const updatedFriendList = {
-        friendshipRequestList: currentUserFriendshipList,
+        friendRequestList: currentUserFriendList,
         friends : currentUserFriendList
       }
       await this.friendRepository.updateById(currentUser._id, updatedFriendList);
     } else {;
       const updatedFriendList = {
-        friendshipRequestList: currentUserFriendshipList,
-        friends : [friendshipRequestBody.newFriendUsername]
+        friendRequestList: currentUserFriendsList,
+        friends : [friendRequestBody.newFriendUsername]
       }
       await this.friendRepository.updateById(currentUser._id, updatedFriendList);
     }
@@ -288,11 +288,11 @@ export class FriendsController {
     }
   }
 
-  @post('/refuseFriendshipRequest')
+  @post('/refuseFriendRequest')
   @response(204, {
-    description: 'Refuse friendship request',
+    description: 'Refuse friend request',
   })
-  async refuseFriendshipRequest(
+  async refuseFriendRequest(
     @requestBody({
       content: {
         'application/json': {
@@ -307,30 +307,30 @@ export class FriendsController {
         },
       },
     })
-    friendshipRequestBody: {currentUserId: string, newFriendUsername: string}
+    friendRequestBody: {currentUserId: string, newFriendUsername: string}
   ): Promise<void> {
     //* data
-    const currentUserFriendshipData = await this.friendRepository.findOne({where: {userId: friendshipRequestBody.currentUserId}});
-    if (!currentUserFriendshipData) {
+    const currentUserFriendData = await this.friendRepository.findOne({where: {userId: friendRequestBody.currentUserId}});
+    if (!currentUserFriendData) {
       throw new HttpError(401, 'There are not any user with that id');
     }
 
-    const applicantUser = await this.userRepository.findOne({where: { username: friendshipRequestBody.newFriendUsername}});
+    const applicantUser = await this.userRepository.findOne({where: { username: friendRequestBody.newFriendUsername}});
     if (!applicantUser) {
       throw new HttpError(401, `There are not any user with username: ${applicantUser}`)
     }
 
-    //* Refusing frienship request
-    if(currentUserFriendshipData.friendshipRequestList) {
-      const currentUserFriendshipRequestList = currentUserFriendshipData.friendshipRequestList;
-      const indexOfUserToDelete = currentUserFriendshipRequestList.indexOf(applicantUser.id);
+    //* Refusing frien request
+    if(currentUserFriendData.friendRequestList) {
+      const currentUserFriendRequestList = currentUserFriendData.friendRequestList;
+      const indexOfUserToDelete = currentUserFriendRequestList.indexOf(applicantUser.id);
       if (indexOfUserToDelete !== -1 && typeof indexOfUserToDelete === 'number') {
-        currentUserFriendshipRequestList.splice(indexOfUserToDelete,1);
+        currentUserFriendRequestList.splice(indexOfUserToDelete,1);
       }
-      const updatedFriendshipRequestList = {
-        friendshipRequestList: currentUserFriendshipRequestList,
+      const updatedFriendRequestList = {
+        friendRequestList: currentUserFriendRequestList,
       }
-      await this.friendRepository.updateById(currentUserFriendshipData._id, updatedFriendshipRequestList);
+      await this.friendRepository.updateById(currentUserFriendData._id, updatedFriendRequestList);
     }
   }
 
@@ -353,28 +353,28 @@ export class FriendsController {
         },
       },
     })
-    friendshipRequestBody: {currentUserId: string, friendUsername: string}
+    friendRequestBody: {currentUserId: string, friendUsername: string}
   ): Promise<void> {
     //* Data
-    const currentUserFriendshipData = await this.friendRepository.findOne({where: { userId: friendshipRequestBody.currentUserId}});
-    if (!currentUserFriendshipData) {
+    const currentUserFriendData = await this.friendRepository.findOne({where: { userId: friendRequestBody.currentUserId}});
+    if (!currentUserFriendData) {
       throw new HttpError(401, 'There are not any user with that id');
     }
-    const currentUserData = await this.userRepository.findById(friendshipRequestBody.currentUserId);
+    const currentUserData = await this.userRepository.findById(friendRequestBody.currentUserId);
 
-    const userToDelete = await this.userRepository.findOne({where: {username: friendshipRequestBody.friendUsername}});
+    const userToDelete = await this.userRepository.findOne({where: {username: friendRequestBody.friendUsername}});
     if (!userToDelete) {
       throw new HttpError(401, `There are not any user with username: ${userToDelete}`)
     }
-    const userToDeleteFriendshipData = await this.friendRepository.findOne({where: {userId: userToDelete.id}});
-    if (!userToDeleteFriendshipData) {
+    const userToDeleteFriendData = await this.friendRepository.findOne({where: {userId: userToDelete.id}});
+    if (!userToDeleteFriendData) {
       throw new HttpError(401, `User ${userToDelete.username} not found`)
     }
 
     //* Delete friend from currentUser's friends list
-    const currentUserFriendList = currentUserFriendshipData.friends;
+    const currentUserFriendList = currentUserFriendData.friends;
     if (currentUserFriendList) {
-      const indexOfFriendToDelete = currentUserFriendList.indexOf(friendshipRequestBody.friendUsername);
+      const indexOfFriendToDelete = currentUserFriendList.indexOf(friendRequestBody.friendUsername);
       if (indexOfFriendToDelete !== -1) {
         currentUserFriendList.splice(indexOfFriendToDelete,1);
       }
@@ -382,10 +382,10 @@ export class FriendsController {
     const newCurrentUserFriendlist = {
       friends: currentUserFriendList
     }
-    await this.friendRepository.updateById(currentUserFriendshipData._id,newCurrentUserFriendlist);
+    await this.friendRepository.updateById(currentUserFriendData._id,newCurrentUserFriendlist);
 
     //* Delete
-    const deletedFriendFriendlist = userToDeleteFriendshipData.friends;
+    const deletedFriendFriendlist = userToDeleteFriendData.friends;
     if (deletedFriendFriendlist) {
       let indexOfCurrentUser: number;
       /* Always comes in this conditional,but it's implemented becouse in the
@@ -398,7 +398,7 @@ export class FriendsController {
     const newDeletedFriendFriendslist = {
       friends: deletedFriendFriendlist,
     }
-    await this.friendRepository.updateById(userToDeleteFriendshipData._id, newDeletedFriendFriendslist)
+    await this.friendRepository.updateById(userToDeleteFriendData._id, newDeletedFriendFriendslist)
   }
 
   @get('/userFriends/{id}')

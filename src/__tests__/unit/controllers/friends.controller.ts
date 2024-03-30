@@ -92,7 +92,7 @@ describe('Friends controller test', () => {
     }
   });
 
-  it('Testing friendship request behaviour', async () => {
+  it('Testing friend request behaviour', async () => {
     //* Users
     await userRepository.create(userFirstExample);
     await userRepository.create(userSecondExample);
@@ -101,8 +101,8 @@ describe('Friends controller test', () => {
     await friendRepository.create(friendSecondExample);
     await friendRepository.create(friendThirdExample);
     await friendRepository.create(friendFourthExample);
-    //* Send friendship request when friendRequestArray empty
-    await friendController.sendFriendshipRequest({
+    //* Send friend request when friendRequestArray empty
+    await friendController.sendFriendRequest({
       currentUserId: '10',
       newFriendId: '11',
     });
@@ -110,10 +110,10 @@ describe('Friends controller test', () => {
       where: {userId: '11'},
     });
     if (foundedFriendList) {
-      expect(foundedFriendList.friendshipRequestList).to.deepEqual(['10']);
+      expect(foundedFriendList.friendRequestList).to.deepEqual(['10']);
     }
-    //* Send friendship request when friendRequestArray with one or more friendship requests inside
-    await friendController.sendFriendshipRequest({
+    //* Send friend request when friendRequestArray with one or more friend requests inside
+    await friendController.sendFriendRequest({
       currentUserId: '12',
       newFriendId: '11',
     });
@@ -121,40 +121,40 @@ describe('Friends controller test', () => {
       where: {userId: '11'},
     });
     if (updatedFriendList) {
-      expect(updatedFriendList.friendshipRequestList).to.deepEqual([
+      expect(updatedFriendList.friendRequestList).to.deepEqual([
         '10',
         '12',
       ]);
     }
   });
 
-  it('Accept friendship request', async () => {
-    await friendController.acceptFriendshipRequest({
+  it('Accept friend request', async () => {
+    await friendController.acceptFriendRequest({
       currentUserId: '11',
       newFriendUsername: 'AdrianTest',
     });
-    const currentUserFriendshipData = await friendRepository.findOne({
+    const currentUserFriendData = await friendRepository.findOne({
       where: {userId: '11'},
     });
-    const newFriendFriendshiptData = await friendRepository.findOne({
+    const newFriendFriendtData = await friendRepository.findOne({
       where: {userId: '10'},
     });
-    expect(currentUserFriendshipData?.friendshipRequestList).not.to.containDeep(
+    expect(currentUserFriendData?.friendRequestList).not.to.containDeep(
       '10',
     );
-    expect(currentUserFriendshipData?.friends).to.deepEqual(['AdrianTest']);
-    expect(newFriendFriendshiptData?.friends).to.deepEqual(['ttt']);
+    expect(currentUserFriendData?.friends).to.deepEqual(['AdrianTest']);
+    expect(newFriendFriendtData?.friends).to.deepEqual(['ttt']);
   });
 
-  it('Refuse friendship request', async () => {
-    await friendController.refuseFriendshipRequest({
+  it('Refuse friend request', async () => {
+    await friendController.refuseFriendRequest({
       currentUserId: '11',
       newFriendUsername: 'tttt',
     });
-    const currentUserFriendshipData = await friendRepository.findOne({
+    const currentUserFriendData = await friendRepository.findOne({
       where: {userId: '11'},
     });
-    expect(currentUserFriendshipData?.friendshipRequestList).not.to.containDeep(
+    expect(currentUserFriendData?.friendRequestList).not.to.containDeep(
       '12',
     );
   });
@@ -177,9 +177,9 @@ describe('Friends controller test', () => {
       currentUserId: '11',
       friendUsername: 'AdrianTest',
     });
-    const currentUserFriendshipData = await friendRepository.findOne({
+    const currentUserFriendData = await friendRepository.findOne({
       where: {userId: '11'},
     });
-    expect(currentUserFriendshipData?.friends).not.to.containDeep('AdrianTest');
+    expect(currentUserFriendData?.friends).not.to.containDeep('AdrianTest');
   });
 });
