@@ -7,47 +7,48 @@ import {
   // Where,
 } from '@loopback/repository';
 import {
-  // post,
+  post,
   param,
   get,
   getModelSchemaRef,
   // patch,
   // put,
   del,
-  // requestBody,
+  requestBody,
   response,
 } from '@loopback/rest';
 import {Friend} from '../models';
 import {FriendRepository} from '../repositories';
 import {HttpError} from '../utils/http-error';
-//import {authenticate} from '@loopback/authentication';
+import {authenticate} from '@loopback/authentication';
 
+@authenticate('jwt')
 export class FriendsController {
   constructor(
     @repository(FriendRepository)
     public friendRepository : FriendRepository,
   ) {}
 
-  // @post('/friends')
-  // @response(200, {
-  //   description: 'Friend model instance',
-  //   content: {'application/json': {schema: getModelSchemaRef(Friend)}},
-  // })
-  // async create(
-  //   @requestBody({
-  //     content: {
-  //       'application/json': {
-  //         schema: getModelSchemaRef(Friend, {
-  //           title: 'NewFriend',
-  //           exclude: ['_id'],
-  //         }),
-  //       },
-  //     },
-  //   })
-  //   friend: Omit<Friend, '_id'>,
-  // ): Promise<Friend> {
-  //   return this.friendRepository.create(friend);
-  // }
+  @post('/friends')
+  @response(200, {
+    description: 'Friend model instance',
+    content: {'application/json': {schema: getModelSchemaRef(Friend)}},
+  })
+  async create(
+    @requestBody({
+      content: {
+        'application/json': {
+          schema: getModelSchemaRef(Friend, {
+            title: 'NewFriend',
+            exclude: ['_id'],
+          }),
+        },
+      },
+    })
+    friend: Omit<Friend, '_id'>,
+  ): Promise<Friend> {
+    return this.friendRepository.create(friend);
+  }
 
   // @get('/friends/count')
   // @response(200, {
@@ -157,5 +158,116 @@ export class FriendsController {
     } else {
       throw new HttpError(400, 'There are not any entry in the db for that user.')
     }
+  }
+
+
+  @post('/sendFriendshipRequest')
+  @response(204, {
+    description: 'Send friendship request',
+  })
+  async sendFriendshipRequest(
+    @requestBody({
+      content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            properties: {
+              currentUserUsername: {type: 'string'},
+              newFriendUsername: {type: 'string'},
+            },
+            required: ['currentUserUsername', 'newFriendUsername'],
+          },
+        },
+      },
+    })
+    friendshipRequestBody: {currentUserUsername: string, newFriendUsername: string}
+  ): Promise<void> {
+
+  }
+
+  @post('/acceptFriendshipRequest')
+  @response(204, {
+    description: 'Accept friendship request',
+  })
+  async acceptFriendshipRequest(
+    @requestBody({
+      content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            properties: {
+              currentUserUsername: {type: 'string'},
+              newFriendUsername: {type: 'string'},
+            },
+            required: ['currentUserUsername', 'newFriendUsername'],
+          },
+        },
+      },
+    })
+    friendshipRequestBody: {currentUserUsername: string, newFriendUsername: string}
+  ): Promise<void> {
+
+  }
+
+  @post('/refuseFriendshipRequest')
+  @response(204, {
+    description: 'Refuse friendship request',
+  })
+  async refuseFriendshipRequest(
+    @requestBody({
+      content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            properties: {
+              currentUserUsername: {type: 'string'},
+              newFriendUsername: {type: 'string'},
+            },
+            required: ['currentUserUsername', 'newFriendUsername'],
+          },
+        },
+      },
+    })
+    friendshipRequestBody: {currentUserUsername: string, newFriendUsername: string}
+  ): Promise<void> {
+
+  }
+
+  @del('/deleteFriend')
+  @response(204, {
+    description: 'Delete friend',
+  })
+  async deleteFriend(
+    @requestBody({
+      content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            properties: {
+              currentUserUsername: {type: 'string'},
+              newFriendUsername: {type: 'string'},
+            },
+            required: ['currentUserUsername', 'newFriendUsername'],
+          },
+        },
+      },
+    })
+    friendshipRequestBody: {currentUserUsername: string, newFriendUsername: string}
+  ): Promise<void> {
+
+  }
+
+  @get('/userFriends/{id}')
+  @response(204, {
+    description: 'Get friends',
+  })
+  async getFriends(
+    @param.path.string('id') id: string,
+  ): Promise<string[] | null> {
+    const currentUser = await this.friendRepository.findById(id);
+    if(!currentUser) {
+      throw new HttpError(401, 'User not found');
+    }
+    return currentUser.friends ? currentUser.friends : null;
   }
 }
