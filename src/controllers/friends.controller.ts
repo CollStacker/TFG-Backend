@@ -408,7 +408,9 @@ export class FriendsController {
   async getFriends(
     @param.path.string('id') id: string,
   ): Promise<string[] | null> {
-    const currentUser = await this.friendRepository.findById(id);
+    const currentUser = await this.friendRepository.findOne({where: {
+      userId: id
+    }});
     if(!currentUser) {
       throw new HttpError(401, 'User not found');
     }

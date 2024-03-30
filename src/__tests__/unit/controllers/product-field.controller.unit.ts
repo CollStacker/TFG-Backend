@@ -62,7 +62,6 @@ describe('Product-field controller test', () => {
 
   it('Finding a unexist product fields', async () => {
     const foundedProductFields = await productFieldController.findById('10');
-    console.log(foundedProductFields);
     expect(foundedProductFields).to.be.null();
   });
 });

@@ -1,6 +1,11 @@
 {
   "include": ["dist"],
-  "exclude": ["dist/__tests__/"],
+  "exclude": ["dist/__tests__/",
+   "dist/index.js",
+    "dist/controllers/user.controller.js",
+    "dist/application.js",
+    "dist/sequence.js"
+  ],
   "extension": [".js", ".ts"],
   "reporter": ["text", "html"],
   "exclude-after-remap": false

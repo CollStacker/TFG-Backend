@@ -76,4 +76,9 @@ describe('Product controller test', () => {
       expect(error.message).to.equal('Entity not found: Product with id "4"');
     }
   });
+
+  it( 'Try to get products from a collection with anyone', async () => {
+    const foundedProducts = await productController.getCollectionProducts('10');
+    expect(foundedProducts).to.be.null();
+  })
 });
