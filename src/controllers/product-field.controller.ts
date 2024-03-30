@@ -109,7 +109,7 @@ export class ProductFieldController {
     @param.path.string('id') id: string,
   ): Promise<ProductField[] | null> {
     const foundedCustomFields = await this.productFieldRepository.find({where: { productId: id}});
-    if (foundedCustomFields)
+    if (foundedCustomFields.length !== 0)
       return foundedCustomFields
 
     return null;

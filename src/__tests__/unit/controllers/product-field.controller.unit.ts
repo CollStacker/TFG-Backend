@@ -6,11 +6,9 @@ import {
   productFieldFirstExample,
   productFieldSecondExample,
   productFieldThirdExample,
-
 } from '../../data/endpointTest.data';
 import {endpointTestdb} from '../../fixtures/datasources/endpointTestdb.datasource';
 import {givenProductField} from '../../helpers/endpointDatabase.helpers';
-
 
 describe('Product-field controller test', () => {
   let productFieldController: ProductFieldController;
@@ -32,29 +30,39 @@ describe('Product-field controller test', () => {
   });
 
   it('Create a productField entry', async () => {
-    const createdProductField = await productFieldController.create(productFieldFirstExample);
+    const createdProductField = await productFieldController.create(
+      productFieldFirstExample,
+    );
     const expectedResult = {
-      _id : '3',
+      _id: '3',
       key: 'testKey1',
       value: 'testValue',
       type: 'testType',
-      productId: '2'
-    }
+      productId: '2',
+    };
     expect(createdProductField.toJSON()).to.deepEqual(expectedResult);
-  })
+  });
 
   it('Find every custom field from a determianted product', async () => {
-    const expectedCustomFields = [secondProductField,thirdProductField];
-    const foundedCustomFields = await productFieldController.findById('1')
+    const expectedCustomFields = [secondProductField, thirdProductField];
+    const foundedCustomFields = await productFieldController.findById('1');
     expect(foundedCustomFields).to.deepEqual(expectedCustomFields);
-  })
+  });
 
   it('Delete a Product Field entry', async () => {
     try {
       await productFieldController.deleteById('1');
       await productFieldController.findById('1');
     } catch (error) {
-      expect(error.message).to.equal('Entity not found: ProductField with id "1"')
+      expect(error.message).to.equal(
+        'Entity not found: ProductField with id "1"',
+      );
     }
-  })
+  });
+
+  it('Finding a unexist product fields', async () => {
+    const foundedProductFields = await productFieldController.findById('10');
+    console.log(foundedProductFields);
+    expect(foundedProductFields).to.be.null();
+  });
 });
