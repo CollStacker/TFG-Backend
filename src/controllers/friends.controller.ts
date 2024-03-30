@@ -299,17 +299,39 @@ export class FriendsController {
           schema: {
             type: 'object',
             properties: {
-              currentUserUsername: {type: 'string'},
+              currentUserId: {type: 'string'},
               newFriendUsername: {type: 'string'},
             },
-            required: ['currentUserUsername', 'newFriendUsername'],
+            required: ['currentUserId', 'newFriendUsername'],
           },
         },
       },
     })
-    friendshipRequestBody: {currentUserUsername: string, newFriendUsername: string}
+    friendshipRequestBody: {currentUserId: string, newFriendUsername: string}
   ): Promise<void> {
+    //* data
+    const currentUserFriendshipData = await this.friendRepository.findOne({where: {userId: friendshipRequestBody.currentUserId}});
+    if (!currentUserFriendshipData) {
+      throw new HttpError(401, 'There are not any user with that id');
+    }
 
+    const applicantUser = await this.userRepository.findOne({where: { username: friendshipRequestBody.newFriendUsername}});
+    if (!applicantUser) {
+      throw new HttpError(401, `There are not any user with username: ${applicantUser}`)
+    }
+
+    //* Refusing frienship request
+    if(currentUserFriendshipData.friendshipRequestList) {
+      const currentUserFriendshipRequestList = currentUserFriendshipData.friendshipRequestList;
+      const indexOfUserToDelete = currentUserFriendshipRequestList.indexOf(applicantUser.id);
+      if (indexOfUserToDelete !== -1 && typeof indexOfUserToDelete === 'number') {
+        currentUserFriendshipRequestList.splice(indexOfUserToDelete,1);
+      }
+      const updatedFriendshipRequestList = {
+        friendshipRequestList: currentUserFriendshipRequestList,
+      }
+      await this.friendRepository.updateById(currentUserFriendshipData._id, updatedFriendshipRequestList);
+    }
   }
 
   @del('/deleteFriend')
