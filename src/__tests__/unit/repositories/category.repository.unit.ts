@@ -32,7 +32,7 @@ describe('Category repository unit test', () => {
     expect(createdCategory.toJSON()).to.deepEqual(categoryData);
   });
 
-  it('Find user by id', async () => {
+  it('Find category by id', async () => {
     const createdCategory = await categoryRepository.create({
       name: 'testCategory',
       description: undefined,

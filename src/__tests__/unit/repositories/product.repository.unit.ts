@@ -31,7 +31,7 @@ describe('Product repository unit test', () => {
     expect(createdproduct.toJSON()).to.deepEqual(productData);
   });
 
-  it('Find user by id', async () => {
+  it('Find product by id', async () => {
     const createdproduct = await productRepository.create({
       name: 'testProduct',
       collectionId: '00003'

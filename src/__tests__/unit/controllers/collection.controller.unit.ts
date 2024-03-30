@@ -50,6 +50,11 @@ describe('Collection controller test', () => {
     expect(expectedCollections).to.deepEqual(foundedCollections);
   })
 
+  it ('Try to found collections of one user that does not have one', async () => {
+    const foundedCollection = await collectionController.getUserCollections('10');
+    expect(foundedCollection).to.be.null();
+  })
+
   it('Update collection property', async () => {
     const newCollection = {
       ...collectionThirdExample,

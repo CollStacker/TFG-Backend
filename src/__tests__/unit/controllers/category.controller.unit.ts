@@ -46,4 +46,19 @@ describe('Category controller test', () => {
       expect(foundedCategories).to.be.null();
     }
   })
+
+  it('Delete one category from the database', async () => {
+    try {
+      await categoryController.deleteById('1');
+      await categoryRepository.findById('1');
+    } catch (error) {
+      expect(error.message).to.equal('Entity not found: Category with id "1"')
+    }
+  })
+
+  it( 'Try to get categories from a collection with anyone', async () => {
+    const foundedCategories = await categoryController.getCollectionCategories('10');
+    expect(foundedCategories).to.be.null();
+  })
+
 })

@@ -1,5 +1,5 @@
-import {ProductRepository, CategoryRepository, CollectionRepository, FriendRepository, UserRepository} from '../../repositories';
-import {Product, Category, Collection, Friend, UserModel} from '../../models'
+import {ProductRepository, CategoryRepository, CollectionRepository, FriendRepository,/* UserRepository,*/ ProductFieldRepository} from '../../repositories';
+import {Product, Category, Collection, Friend, /*UserModel, */ ProductField} from '../../models'
 import {testdb} from '../fixtures/datasources/testdb.datasource';
 
 export async function givenEmptyDatabase() {
@@ -7,28 +7,29 @@ export async function givenEmptyDatabase() {
   await new CategoryRepository(testdb).deleteAll();
   await new CollectionRepository(testdb).deleteAll();
   await new FriendRepository(testdb).deleteAll();
-  await new UserRepository(testdb).deleteAll();
+  // await new UserRepository(testdb).deleteAll();
+  await new ProductFieldRepository(testdb).deleteAll();
 }
 
 //* GIVING DATA TO THE TEST DATABASE
 //* 1. User
-export function givenUserData(data?: Partial<UserModel>) {
-  return Object.assign(
-    {
-      // _id: '00001',
-      username: 'AdrianTest01',
-      name: 'Adrian',
-      surnames: 'Glez Exp',
-      email: 'adriantest@gmail.com',
-      password: '12345678aA@',
-    },
-    data,
-  );
-}
+// export function givenUserData(data?: Partial<UserModel>) {
+//   return Object.assign(
+//     {
+//       // _id: '00001',
+//       username: 'AdrianTest01',
+//       name: 'Adrian',
+//       surnames: 'Glez Exp',
+//       email: 'adriantest@gmail.com',
+//       password: '12345678aA@',
+//     },
+//     data,
+//   );
+// }
 
-export async function givenUser(data?: Partial<UserModel>) {
-  return new UserRepository(testdb).create(givenUserData(data));
-}
+// export async function givenUser(data?: Partial<UserModel>) {
+//   return new UserRepository(testdb).create(givenUserData(data));
+// }
 
 //* 2. Friend
 export function givenFriendData(data?: Partial<Friend>) {
@@ -91,4 +92,21 @@ export function givenProductData(data?: Partial<Product>) {
 
 export async function givenProduct(data?: Partial<Product>) {
   return new ProductRepository(testdb).create(givenProductData(data));
+}
+
+//* 6. Product-Field
+export function givenProductFieldData(data?: Partial<ProductField>) {
+  return Object.assign(
+    {
+      key: 'key',
+      value: 'value',
+      type: 'type',
+      productId: '1',
+    },
+    data,
+  );
+}
+
+export async function givenProductField(data?: Partial<ProductField>) {
+  return new ProductFieldRepository(testdb).create(givenProductFieldData(data));
 }

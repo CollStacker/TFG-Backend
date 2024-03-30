@@ -35,7 +35,7 @@ describe('Collection repository unit test', () => {
     expect(createdCollection.toJSON()).to.deepEqual(collectionData);
   });
 
-  it('Find user by id', async () => {
+  it('Find collection by id', async () => {
     const createdCollection = await collectionRepository.create({
       title: 'testCollection',
       description: 'testDescription',

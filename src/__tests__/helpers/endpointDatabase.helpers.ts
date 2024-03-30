@@ -1,13 +1,12 @@
-import {ProductRepository, CategoryRepository, CollectionRepository, FriendRepository, UserRepository} from '../../repositories';
+import {ProductRepository, CategoryRepository, CollectionRepository, FriendRepository, /*UserRepository,*/ ProductFieldRepository} from '../../repositories';
 import { endpointTestdb } from '../fixtures/datasources/endpointTestdb.datasource';
-import { Collection, Category, Product, Friend } from '../../models';
+import { Collection, Category, Product, Friend, ProductField } from '../../models';
 
 export async function givenEmptyEndpointDatabase() {
   await new ProductRepository(endpointTestdb).deleteAll();
   await new CategoryRepository(endpointTestdb).deleteAll();
   await new CollectionRepository(endpointTestdb).deleteAll();
   await new FriendRepository(endpointTestdb).deleteAll();
-  await new UserRepository(endpointTestdb).deleteAll();
 }
 
 //* 2. Friend
@@ -71,4 +70,21 @@ export function givenProductData(data?: Partial<Product>) {
 
 export async function givenProduct(data?: Partial<Product>) {
   return new ProductRepository(endpointTestdb).create(givenProductData(data));
+}
+
+//* 6. Product-Field
+export function givenProductFieldData(data?: Partial<ProductField>) {
+  return Object.assign(
+    {
+      key: 'key',
+      value: 'value',
+      type: 'type',
+      productId: '1',
+    },
+    data,
+  );
+}
+
+export async function givenProductField(data?: Partial<ProductField>) {
+  return new ProductFieldRepository(endpointTestdb).create(givenProductFieldData(data));
 }

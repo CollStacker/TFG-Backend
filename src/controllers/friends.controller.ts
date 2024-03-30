@@ -1,10 +1,10 @@
 import {
-  Count,
-  CountSchema,
-  Filter,
+  // Count,
+  // CountSchema,
+  // Filter,
   FilterExcludingWhere,
   repository,
-  Where,
+  // Where,
 } from '@loopback/repository';
 import {
   post,
@@ -12,7 +12,7 @@ import {
   get,
   getModelSchemaRef,
   patch,
-  put,
+  // put,
   del,
   requestBody,
   response,
@@ -20,12 +20,17 @@ import {
 import {Friend} from '../models';
 import {FriendRepository} from '../repositories';
 import {HttpError} from '../utils/http-error';
-//import {authenticate} from '@loopback/authentication';
+import {authenticate} from '@loopback/authentication';
+import { UserRepository } from '@loopback/authentication-jwt';
 
+@authenticate('jwt')
 export class FriendsController {
   constructor(
+    @repository(UserRepository)
+    protected userRepository: UserRepository,
     @repository(FriendRepository)
     public friendRepository : FriendRepository,
+
   ) {}
 
   @post('/friends')
@@ -49,53 +54,53 @@ export class FriendsController {
     return this.friendRepository.create(friend);
   }
 
-  @get('/friends/count')
-  @response(200, {
-    description: 'Friend model count',
-    content: {'application/json': {schema: CountSchema}},
-  })
-  async count(
-    @param.where(Friend) where?: Where<Friend>,
-  ): Promise<Count> {
-    return this.friendRepository.count(where);
-  }
+  // @get('/friends/count')
+  // @response(200, {
+  //   description: 'Friend model count',
+  //   content: {'application/json': {schema: CountSchema}},
+  // })
+  // async count(
+  //   @param.where(Friend) where?: Where<Friend>,
+  // ): Promise<Count> {
+  //   return this.friendRepository.count(where);
+  // }
 
-  @get('/friends')
-  @response(200, {
-    description: 'Array of Friend model instances',
-    content: {
-      'application/json': {
-        schema: {
-          type: 'array',
-          items: getModelSchemaRef(Friend, {includeRelations: true}),
-        },
-      },
-    },
-  })
-  async find(
-    @param.filter(Friend) filter?: Filter<Friend>,
-  ): Promise<Friend[]> {
-    return this.friendRepository.find(filter);
-  }
+  // @get('/friends')
+  // @response(200, {
+  //   description: 'Array of Friend model instances',
+  //   content: {
+  //     'application/json': {
+  //       schema: {
+  //         type: 'array',
+  //         items: getModelSchemaRef(Friend, {includeRelations: true}),
+  //       },
+  //     },
+  //   },
+  // })
+  // async find(
+  //   @param.filter(Friend) filter?: Filter<Friend>,
+  // ): Promise<Friend[]> {
+  //   return this.friendRepository.find(filter);
+  // }
 
-  @patch('/friends')
-  @response(200, {
-    description: 'Friend PATCH success count',
-    content: {'application/json': {schema: CountSchema}},
-  })
-  async updateAll(
-    @requestBody({
-      content: {
-        'application/json': {
-          schema: getModelSchemaRef(Friend, {partial: true}),
-        },
-      },
-    })
-    friend: Friend,
-    @param.where(Friend) where?: Where<Friend>,
-  ): Promise<Count> {
-    return this.friendRepository.updateAll(friend, where);
-  }
+  // @patch('/friends')
+  // @response(200, {
+  //   description: 'Friend PATCH success count',
+  //   content: {'application/json': {schema: CountSchema}},
+  // })
+  // async updateAll(
+  //   @requestBody({
+  //     content: {
+  //       'application/json': {
+  //         schema: getModelSchemaRef(Friend, {partial: true}),
+  //       },
+  //     },
+  //   })
+  //   friend: Friend,
+  //   @param.where(Friend) where?: Where<Friend>,
+  // ): Promise<Count> {
+  //   return this.friendRepository.updateAll(friend, where);
+  // }
 
   @get('/friends/{id}')
   @response(200, {
@@ -131,16 +136,16 @@ export class FriendsController {
     await this.friendRepository.updateById(id, friend);
   }
 
-  @put('/friends/{id}')
-  @response(204, {
-    description: 'Friend PUT success',
-  })
-  async replaceById(
-    @param.path.string('id') id: string,
-    @requestBody() friend: Friend,
-  ): Promise<void> {
-    await this.friendRepository.replaceById(id, friend);
-  }
+  // @put('/friends/{id}')
+  // @response(204, {
+  //   description: 'Friend PUT success',
+  // })
+  // async replaceById(
+  //   @param.path.string('id') id: string,
+  //   @requestBody() friend: Friend,
+  // ): Promise<void> {
+  //   await this.friendRepository.replaceById(id, friend);
+  // }
 
   @del('/friends/{id}')
   @response(204, {
@@ -157,5 +162,258 @@ export class FriendsController {
     } else {
       throw new HttpError(400, 'There are not any entry in the db for that user.')
     }
+  }
+
+
+  @post('/sendFriendshipRequest')
+  @response(204, {
+    description: 'Send friendship request',
+  })
+  async sendFriendshipRequest(
+    @requestBody({
+      content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            properties: {
+              currentUserId: {type: 'string'},
+              newFriendId: {type: 'string'},
+            },
+            required: ['currentUserId', 'newFriendId'],
+          },
+        },
+      },
+    })
+    friendshipRequestBody: {currentUserId: string, newFriendId: string}
+  ): Promise<void> {
+    const currentUser = await this.friendRepository.findOne({where: {userId: friendshipRequestBody.currentUserId}});
+    const newFriend = await this.friendRepository.findOne({where: { userId: friendshipRequestBody.newFriendId}});
+    if ( currentUser && newFriend) { //? checking that data is defined properly
+      if (newFriend.friendshipRequestList) {
+        const newFriendRequestList = newFriend.friendshipRequestList;
+        newFriendRequestList.push(currentUser.userId);
+        const newFriendBody = {
+          friendshipRequestList: newFriendRequestList,
+        }
+        await this.friendRepository.updateById(newFriend._id, newFriendBody)
+      } else {
+        const newFriendBody = {
+          friendshipRequestList: [currentUser.userId],
+        }
+        await this.friendRepository.updateById(newFriend._id, newFriendBody)
+      }
+    }
+  }
+
+  @post('/acceptFriendshipRequest')
+  @response(204, {
+    description: 'Accept friendship request',
+  })
+  async acceptFriendshipRequest(
+    @requestBody({
+      content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            properties: {
+              currentUserId: {type: 'string'},
+              newFriendUsername: {type: 'string'},
+            },
+            required: ['currentUserId', 'newFriendUsername'],
+          },
+        },
+      },
+    })
+    friendshipRequestBody: {currentUserId: string, newFriendUsername: string}
+  ): Promise<void> {
+    //* Data
+    const currentUser = await this.friendRepository.findOne({where: {userId: friendshipRequestBody.currentUserId}});
+    if(!currentUser) {
+      throw new HttpError(401, 'There are no user with that userId')
+    }
+    const currentUserData = await this.userRepository.findById(currentUser.userId);
+    if (!currentUserData.username) {
+      throw new HttpError(401, 'Wrong user data, property username cant be undefined')
+    }
+
+    const applicantUser =  await this.userRepository.findOne({where: {username: friendshipRequestBody.newFriendUsername}})
+    if(!applicantUser) {
+      throw new HttpError(401, 'There are no user with that username')
+    }
+
+    const applicantUserFriendDbEntry = await this.friendRepository.findOne({where: {userId: applicantUser?.id}});
+    if(!applicantUserFriendDbEntry) {
+      throw new HttpError(401, 'There are no user with that userId')
+    }
+
+    //* Subract applicant username from friendshipRequest array
+    const currentUserFriendshipList = currentUser.friendshipRequestList
+    const indexOfApplicantUser = currentUserFriendshipList?.indexOf(applicantUser.id)
+    if(indexOfApplicantUser !== -1 && currentUserFriendshipList && typeof indexOfApplicantUser === 'number') {
+      currentUserFriendshipList.splice(indexOfApplicantUser,1);
+    } else {
+      throw new HttpError(401, 'Applicant user did not found in friendship request list.')
+    }
+
+    //* Insert new friend in current user friend list.
+    if(currentUser?.friends) {
+      const currentUserFriendList = currentUser.friends;
+      currentUserFriendList.push(friendshipRequestBody.newFriendUsername)
+      const updatedFriendList = {
+        friendshipRequestList: currentUserFriendshipList,
+        friends : currentUserFriendList
+      }
+      await this.friendRepository.updateById(currentUser._id, updatedFriendList);
+    } else {;
+      const updatedFriendList = {
+        friendshipRequestList: currentUserFriendshipList,
+        friends : [friendshipRequestBody.newFriendUsername]
+      }
+      await this.friendRepository.updateById(currentUser._id, updatedFriendList);
+    }
+
+    //* Insert currentUser into newFriend friends list
+    if(applicantUserFriendDbEntry?.friends) {
+      const applicantUserFriendList = applicantUserFriendDbEntry?.friends;
+      applicantUserFriendList.push(currentUserData.username)
+      const updatedFriendList = {
+        friends: applicantUserFriendList,
+      }
+      await this.friendRepository.updateById(applicantUserFriendDbEntry._id,updatedFriendList)
+    } else {
+      const updatedFriendList = {
+        friends: [currentUserData.username],
+      }
+      await this.friendRepository.updateById(applicantUserFriendDbEntry._id,updatedFriendList)
+    }
+  }
+
+  @post('/refuseFriendshipRequest')
+  @response(204, {
+    description: 'Refuse friendship request',
+  })
+  async refuseFriendshipRequest(
+    @requestBody({
+      content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            properties: {
+              currentUserId: {type: 'string'},
+              newFriendUsername: {type: 'string'},
+            },
+            required: ['currentUserId', 'newFriendUsername'],
+          },
+        },
+      },
+    })
+    friendshipRequestBody: {currentUserId: string, newFriendUsername: string}
+  ): Promise<void> {
+    //* data
+    const currentUserFriendshipData = await this.friendRepository.findOne({where: {userId: friendshipRequestBody.currentUserId}});
+    if (!currentUserFriendshipData) {
+      throw new HttpError(401, 'There are not any user with that id');
+    }
+
+    const applicantUser = await this.userRepository.findOne({where: { username: friendshipRequestBody.newFriendUsername}});
+    if (!applicantUser) {
+      throw new HttpError(401, `There are not any user with username: ${applicantUser}`)
+    }
+
+    //* Refusing frienship request
+    if(currentUserFriendshipData.friendshipRequestList) {
+      const currentUserFriendshipRequestList = currentUserFriendshipData.friendshipRequestList;
+      const indexOfUserToDelete = currentUserFriendshipRequestList.indexOf(applicantUser.id);
+      if (indexOfUserToDelete !== -1 && typeof indexOfUserToDelete === 'number') {
+        currentUserFriendshipRequestList.splice(indexOfUserToDelete,1);
+      }
+      const updatedFriendshipRequestList = {
+        friendshipRequestList: currentUserFriendshipRequestList,
+      }
+      await this.friendRepository.updateById(currentUserFriendshipData._id, updatedFriendshipRequestList);
+    }
+  }
+
+  @del('/deleteFriend')
+  @response(204, {
+    description: 'Delete friend',
+  })
+  async deleteFriend(
+    @requestBody({
+      content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            properties: {
+              currentUserId: {type: 'string'},
+              friendUsername: {type: 'string'},
+            },
+            required: ['currentUserId', 'friendUsername'],
+          },
+        },
+      },
+    })
+    friendshipRequestBody: {currentUserId: string, friendUsername: string}
+  ): Promise<void> {
+    //* Data
+    const currentUserFriendshipData = await this.friendRepository.findOne({where: { userId: friendshipRequestBody.currentUserId}});
+    if (!currentUserFriendshipData) {
+      throw new HttpError(401, 'There are not any user with that id');
+    }
+    const currentUserData = await this.userRepository.findById(friendshipRequestBody.currentUserId);
+
+    const userToDelete = await this.userRepository.findOne({where: {username: friendshipRequestBody.friendUsername}});
+    if (!userToDelete) {
+      throw new HttpError(401, `There are not any user with username: ${userToDelete}`)
+    }
+    const userToDeleteFriendshipData = await this.friendRepository.findOne({where: {userId: userToDelete.id}});
+    if (!userToDeleteFriendshipData) {
+      throw new HttpError(401, `User ${userToDelete.username} not found`)
+    }
+
+    //* Delete friend from currentUser's friends list
+    const currentUserFriendList = currentUserFriendshipData.friends;
+    if (currentUserFriendList) {
+      const indexOfFriendToDelete = currentUserFriendList.indexOf(friendshipRequestBody.friendUsername);
+      if (indexOfFriendToDelete !== -1) {
+        currentUserFriendList.splice(indexOfFriendToDelete,1);
+      }
+    }
+    const newCurrentUserFriendlist = {
+      friends: currentUserFriendList
+    }
+    await this.friendRepository.updateById(currentUserFriendshipData._id,newCurrentUserFriendlist);
+
+    //* Delete
+    const deletedFriendFriendlist = userToDeleteFriendshipData.friends;
+    if (deletedFriendFriendlist) {
+      let indexOfCurrentUser: number;
+      /* Always comes in this conditional,but it's implemented becouse in the
+      User model (given by lb4), the property username is possibly to be null */
+      if(currentUserData.username) {
+        indexOfCurrentUser = deletedFriendFriendlist.indexOf(currentUserData.username);
+        deletedFriendFriendlist.splice(indexOfCurrentUser,1)
+      }
+    }
+    const newDeletedFriendFriendslist = {
+      friends: deletedFriendFriendlist,
+    }
+    await this.friendRepository.updateById(userToDeleteFriendshipData._id, newDeletedFriendFriendslist)
+  }
+
+  @get('/userFriends/{id}')
+  @response(204, {
+    description: 'Get friends',
+  })
+  async getFriends(
+    @param.path.string('id') id: string,
+  ): Promise<string[] | null> {
+    const currentUser = await this.friendRepository.findOne({where: {
+      userId: id
+    }});
+    if(!currentUser) {
+      throw new HttpError(401, 'User not found');
+    }
+    return currentUser.friends ? currentUser.friends : null;
   }
 }
