@@ -21,12 +21,12 @@ export class NewUserRequest extends User {
   @property({
     type: 'string',
   })
-  profilePhoto: string;
+  profilePhoto?: string;
 
   @property({
     type: 'string',
   })
-  biography: string;
+  biography?: string;
 }
 
 // export interface UserRelations {
