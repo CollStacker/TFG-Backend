@@ -21,12 +21,16 @@ import {Friend} from '../models';
 import {FriendRepository} from '../repositories';
 import {HttpError} from '../utils/http-error';
 import {authenticate} from '@loopback/authentication';
+import { UserRepository } from '@loopback/authentication-jwt';
 
 @authenticate('jwt')
 export class FriendsController {
   constructor(
+    @repository(UserRepository)
+    protected userRepository: UserRepository,
     @repository(FriendRepository)
     public friendRepository : FriendRepository,
+
   ) {}
 
   @post('/friends')
@@ -182,21 +186,22 @@ export class FriendsController {
     })
     friendshipRequestBody: {currentUserId: string, newFriendId: string}
   ): Promise<void> {
-    const currentUser = await this.friendRepository.find({where: {userId: friendshipRequestBody.currentUserId}});
-    const newFriend = await this.friendRepository.find({where: { userId: friendshipRequestBody.newFriendId}});
-    if (newFriend[0].friendshipRequestList) {
-      const newFriendRequestList = newFriend[0].friendshipRequestList;
-      newFriendRequestList.push(currentUser[0].userId);
-      const newFriendBody = {
-        friendshipRequestList: newFriendRequestList,
+    const currentUser = await this.friendRepository.findOne({where: {userId: friendshipRequestBody.currentUserId}});
+    const newFriend = await this.friendRepository.findOne({where: { userId: friendshipRequestBody.newFriendId}});
+    if ( currentUser && newFriend) { //? checking that data is defined properly
+      if (newFriend.friendshipRequestList) {
+        const newFriendRequestList = newFriend.friendshipRequestList;
+        newFriendRequestList.push(currentUser.userId);
+        const newFriendBody = {
+          friendshipRequestList: newFriendRequestList,
+        }
+        await this.friendRepository.updateById(newFriend._id, newFriendBody)
+      } else {
+        const newFriendBody = {
+          friendshipRequestList: [currentUser.userId],
+        }
+        await this.friendRepository.updateById(newFriend._id, newFriendBody)
       }
-      await this.friendRepository.updateById(newFriend[0]._id, newFriendBody)
-    } else {
-      const newFriendRequestList = [currentUser[0].userId];
-      const newFriendBody = {
-        friendshipRequestList: newFriendRequestList,
-      }
-      await this.friendRepository.updateById(newFriend[0]._id, newFriendBody)
     }
   }
 
@@ -211,17 +216,76 @@ export class FriendsController {
           schema: {
             type: 'object',
             properties: {
-              currentUserUsername: {type: 'string'},
+              currentUserId: {type: 'string'},
               newFriendUsername: {type: 'string'},
             },
-            required: ['currentUserUsername', 'newFriendUsername'],
+            required: ['currentUserId', 'newFriendUsername'],
           },
         },
       },
     })
-    friendshipRequestBody: {currentUserUsername: string, newFriendUsername: string}
+    friendshipRequestBody: {currentUserId: string, newFriendUsername: string}
   ): Promise<void> {
+    //* Data
+    const currentUser = await this.friendRepository.findOne({where: {userId: friendshipRequestBody.currentUserId}});
+    if(!currentUser) {
+      throw new HttpError(401, 'There are no user with that userId')
+    }
+    const currentUserData = await this.userRepository.findById(currentUser.userId);
+    if (!currentUserData.username) {
+      throw new HttpError(401, 'Wrong user data, property username cant be undefined')
+    }
 
+    const applicantUser =  await this.userRepository.findOne({where: {username: friendshipRequestBody.newFriendUsername}})
+    if(!applicantUser) {
+      throw new HttpError(401, 'There are no user with that username')
+    }
+
+    const applicantUserFriendDbEntry = await this.friendRepository.findOne({where: {userId: applicantUser?.id}});
+    if(!applicantUserFriendDbEntry) {
+      throw new HttpError(401, 'There are no user with that userId')
+    }
+
+    //* Subract applicant username from friendshipRequest array
+    const currentUserFriendshipList = currentUser.friendshipRequestList
+    const indexOfApplicantUser = currentUserFriendshipList?.indexOf(applicantUser.id)
+    if(indexOfApplicantUser !== -1 && currentUserFriendshipList && typeof indexOfApplicantUser === 'number') {
+      currentUserFriendshipList.splice(indexOfApplicantUser,1);
+    } else {
+      throw new HttpError(401, 'Applicant user did not found in friendship request list.')
+    }
+
+    //* Insert new friend in current user friend list.
+    if(currentUser?.friends) {
+      const currentUserFriendList = currentUser.friends;
+      currentUserFriendList.push(friendshipRequestBody.newFriendUsername)
+      const updatedFriendList = {
+        friendshipRequestList: currentUserFriendshipList,
+        friends : currentUserFriendList
+      }
+      await this.friendRepository.updateById(currentUser._id, updatedFriendList);
+    } else {;
+      const updatedFriendList = {
+        friendshipRequestList: currentUserFriendshipList,
+        friends : [friendshipRequestBody.newFriendUsername]
+      }
+      await this.friendRepository.updateById(currentUser._id, updatedFriendList);
+    }
+
+    //* Insert currentUser into newFriend friends list
+    if(applicantUserFriendDbEntry?.friends) {
+      const applicantUserFriendList = applicantUserFriendDbEntry?.friends;
+      applicantUserFriendList.push(currentUserData.username)
+      const updatedFriendList = {
+        friends: applicantUserFriendList,
+      }
+      await this.friendRepository.updateById(applicantUserFriendDbEntry._id,updatedFriendList)
+    } else {
+      const updatedFriendList = {
+        friends: [currentUserData.username],
+      }
+      await this.friendRepository.updateById(applicantUserFriendDbEntry._id,updatedFriendList)
+    }
   }
 
   @post('/refuseFriendshipRequest')

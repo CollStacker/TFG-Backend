@@ -3,6 +3,8 @@ import {endpointTestdb} from '../../fixtures/datasources/endpointTestdb.datasour
 import {expect} from '@loopback/testlab';
 import { FriendsController } from '../../../controllers';
 import { FriendRepository } from '../../../repositories';
+import { UserRepository } from '@loopback/authentication-jwt';
+import { UserCredentialsRepository } from '@loopback/authentication-jwt';
 // import { Friend } from '../../../models';
 import {
   friendFirstExample
@@ -12,10 +14,13 @@ import {
 describe('Friends controller test', () => {
   let friendController: FriendsController;
   let friendRepository: FriendRepository;
+  let userRepository: UserRepository;
 
   beforeEach(async () => {
+    const userCredentialsRepository = new UserCredentialsRepository(endpointTestdb);
+    userRepository = new UserRepository(endpointTestdb, async () => userCredentialsRepository);
     friendRepository = new FriendRepository(endpointTestdb);
-    friendController = new FriendsController(friendRepository);
+    friendController = new FriendsController(userRepository,friendRepository);
   });
 
   after(async () => {
