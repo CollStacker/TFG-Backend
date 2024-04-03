@@ -26,8 +26,8 @@ export class Friend extends Entity {
     itemType: 'string',
     required: false
   })
-  friendshipRequestList?: string[];
-  
+  friendRequestList?: string[];
+
   constructor(data?: Partial<Friend>) {
     super(data);
   }

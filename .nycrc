@@ -4,7 +4,8 @@
    "dist/index.js",
     "dist/controllers/user.controller.js",
     "dist/application.js",
-    "dist/sequence.js"
+    "dist/sequence.js",
+    "dist/controller/websocket.controller.js"
   ],
   "extension": [".js", ".ts"],
   "reporter": ["text", "html"],
