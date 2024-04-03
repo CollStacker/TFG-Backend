@@ -1,5 +1,5 @@
-import {ProductRepository, CategoryRepository, CollectionRepository, FriendRepository,/* UserRepository,*/ ProductFieldRepository} from '../../repositories';
-import {Product, Category, Collection, Friend, /*UserModel, */ ProductField} from '../../models'
+import {ProductRepository, CategoryRepository, CollectionRepository, FriendRepository, ProductFieldRepository, MessageRepository} from '../../repositories';
+import {Product, Category, Collection, Friend, ProductField, Message} from '../../models'
 import {testdb} from '../fixtures/datasources/testdb.datasource';
 
 export async function givenEmptyDatabase() {
@@ -110,3 +110,21 @@ export function givenProductFieldData(data?: Partial<ProductField>) {
 export async function givenProductField(data?: Partial<ProductField>) {
   return new ProductFieldRepository(testdb).create(givenProductFieldData(data));
 }
+
+//* 7.Message
+export function givenMessageData(data?: Partial<Message>) {
+  return Object.assign(
+    {
+      content: 'testMessage',
+      date: new Date(),
+      senderUser: '00001',
+      receiverUser: '00002',
+    },
+    data,
+  );
+}
+
+export async function givenMessageField(data?: Partial<Message>) {
+  return new MessageRepository(testdb).create(givenMessageData(data));
+}
+
