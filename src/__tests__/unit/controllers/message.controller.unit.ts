@@ -29,8 +29,8 @@ describe('Message controller unit tests', () => {
     const fourthMessage = await messageController.create(message4Example)
     expect(firstMessage._id).to.equal('1');
     expect(secondMessage.content).to.equal('message 2')
-    expect(thirdMessage.receiverUser).to.equal('1')
-    expect(fourthMessage.senderUser).to.equal('2')
+    expect(thirdMessage.receiverId).to.equal('1')
+    expect(fourthMessage.senderId).to.equal('2')
   })
 
   it('Get full conversation of two users by his ids', async() => {

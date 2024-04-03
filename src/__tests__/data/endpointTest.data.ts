@@ -209,8 +209,8 @@ export const productFieldThirdExample = {
 export const message1Example = {
   content: 'message 1',
   date: new Date('2024-03-02'),
-  senderUser: '1',
-  receiverUser: '2',
+  senderId: '1',
+  receiverId: '2',
   getId: () => {},
   getIdObject: Object,
   toJSON: Object,
@@ -220,8 +220,8 @@ export const message1Example = {
 export const message2Example = {
   content: 'message 2',
   date: new Date('2024-03-03'),
-  senderUser: '1',
-  receiverUser: '2',
+  senderId: '1',
+  receiverId: '2',
   getId: () => {},
   getIdObject: Object,
   toJSON: Object,
@@ -231,8 +231,8 @@ export const message2Example = {
 export const message3Example = {
   content: 'message 3',
   date: new Date('2024-03-04'),
-  senderUser: '2',
-  receiverUser: '1',
+  senderId: '2',
+  receiverId: '1',
   getId: () => {},
   getIdObject: Object,
   toJSON: Object,
@@ -242,8 +242,8 @@ export const message3Example = {
 export const message4Example = {
   content: 'message 4',
   date: new Date('2024-03-01'),
-  senderUser: '2',
-  receiverUser: '1',
+  senderId: '2',
+  receiverId: '1',
   getId: () => {},
   getIdObject: Object,
   toJSON: Object,

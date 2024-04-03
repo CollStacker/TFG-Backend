@@ -13,11 +13,11 @@ describe('Message model unit test', () => {
   it('Assingns properties correctly', () => {
     const messageData = givenMessageData({
       content: 'testMessage',
-      senderUser: '1',
-      receiverUser: '2',
+      senderId: '1',
+      receiverId: '2',
     },);
     const message = new Message(messageData)
-    expect(message.senderUser).not.to.equal('2');
+    expect(message.senderId).not.to.equal('2');
     expect(message.content).to.eql('testMessage');
   })
 

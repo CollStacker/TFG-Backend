@@ -24,13 +24,13 @@ export class Message extends Entity {
     type: 'string',
     required: true,
   })
-  senderUser: string;
+  senderId: string;
 
   @property({
     type: 'string',
     required: true,
   })
-  receiverUser: string;
+  receiverId: string;
 
 
   constructor(data?: Partial<Message>) {

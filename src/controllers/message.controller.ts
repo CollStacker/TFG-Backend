@@ -66,8 +66,8 @@ export class MessageController {
       },
     }) usersId : {senderId: string, receiverId:string}
   ): Promise<Message[]> {
-    const sendedMessages = await this.messageRepository.find({where: {senderUser: usersId.senderId, receiverUser: usersId.receiverId}})
-    const receivedMessages = await this.messageRepository.find({where: {senderUser: usersId.receiverId, receiverUser: usersId.senderId}})
+    const sendedMessages = await this.messageRepository.find({where: {senderId: usersId.senderId, receiverId: usersId.receiverId}})
+    const receivedMessages = await this.messageRepository.find({where: {senderId: usersId.receiverId, receiverId: usersId.senderId}})
     return sendedMessages.concat(receivedMessages).sort((a, b) => a.date.getTime() - b.date.getTime())
   }
 
@@ -91,8 +91,8 @@ export class MessageController {
       },
     }) usersId : {senderId: string, receiverId:string}
   ): Promise<void> {
-    const sendedMessages = await this.messageRepository.find({where: {senderUser: usersId.senderId, receiverUser: usersId.receiverId}})
-    const receivedMessages = await this.messageRepository.find({where: {senderUser: usersId.receiverId, receiverUser: usersId.senderId}})
+    const sendedMessages = await this.messageRepository.find({where: {senderId: usersId.senderId, receiverId: usersId.receiverId}})
+    const receivedMessages = await this.messageRepository.find({where: {senderId: usersId.receiverId, receiverId: usersId.senderId}})
     await this.deleteMessages(sendedMessages,receivedMessages);
   }
 
