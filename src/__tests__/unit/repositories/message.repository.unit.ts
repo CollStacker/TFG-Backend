@@ -12,8 +12,8 @@ describe('Message repository unit test', () => {
     messageData = {
       _id: '1',
       content: 'testMessage',
-      senderUser: '1',
-      receiverUser: '2',
+      senderId: '1',
+      receiverId: '2',
     };
   });
 
@@ -25,8 +25,8 @@ describe('Message repository unit test', () => {
   it('Create a new message', async () => {
     const createdMessage = await messageRepository.create({
       content: 'testMessage',
-      senderUser: '1',
-      receiverUser: '2',
+      senderId: '1',
+      receiverId: '2',
     });
     expect(createdMessage.toJSON()).to.deepEqual(messageData);
   });
@@ -34,8 +34,8 @@ describe('Message repository unit test', () => {
   it('Find message by id', async () => {
     const createdMessage = await messageRepository.create({
       content: 'testMessage',
-      senderUser: '1',
-      receiverUser: '2',
+      senderId: '1',
+      receiverId: '2',
     });
     const messageById = await messageRepository.findById(createdMessage._id);
     expect(messageById.toJSON()).to.deepEqual(createdMessage.toJSON());
@@ -44,8 +44,8 @@ describe('Message repository unit test', () => {
   it('Updates a message', async () => {
     const createdMessage = await messageRepository.create({
       content: 'testMessage',
-      senderUser: '1',
-      receiverUser: '2',
+      senderId: '1',
+      receiverId: '2',
     });
     const modifiedMessage: Message = {
       ...createdMessage,
@@ -65,8 +65,8 @@ describe('Message repository unit test', () => {
   it('Delete a message', async () => {
     const createdMessage = await messageRepository.create({
       content: 'testMessage',
-      senderUser: '1',
-      receiverUser: '2',
+      senderId: '1',
+      receiverId: '2',
     });
     const createdMessageId = createdMessage._id;
     try {

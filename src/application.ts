@@ -19,12 +19,17 @@ import {
 } from '@loopback/authentication-jwt';
 import {MongodbDataSource} from './datasources';
 // ----------------------------------------------------------------------
+import { SocketIoServer } from '@loopback/socketio';
+import { WebsocketChatController } from './controllers';
 
 export {ApplicationConfig};
 
 export class CollStacker extends BootMixin(
   ServiceMixin(RepositoryMixin(RestApplication)),
 ) {
+
+  socketServer: SocketIoServer;
+
   constructor(options: ApplicationConfig = {}) {
     super(options);
 
@@ -57,5 +62,9 @@ export class CollStacker extends BootMixin(
     this.component(JWTAuthenticationComponent);
     // Bind datasource
     this.dataSource(MongodbDataSource, UserServiceBindings.DATASOURCE_NAME);
+
+    //* WEBSOCKET INITIALIZATION
+    this.socketServer = new SocketIoServer(this);
+    this.socketServer.route(WebsocketChatController);
   }
 }

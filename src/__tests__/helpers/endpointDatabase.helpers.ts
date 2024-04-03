@@ -94,8 +94,8 @@ export function givenMessageData(data?: Partial<Message>) {
   return Object.assign(
     {
       content: 'testMessage',
-      senderUser: '00001',
-      receiverUser: '00002',
+      senderId: '00001',
+      receiverId: '00002',
     },
     data,
   );
