@@ -1,6 +1,6 @@
-import {ProductRepository, CategoryRepository, CollectionRepository, FriendRepository, /*UserRepository,*/ ProductFieldRepository} from '../../repositories';
+import {ProductRepository, CategoryRepository, CollectionRepository, FriendRepository,MessageRepository, /*UserRepository,*/ ProductFieldRepository} from '../../repositories';
 import { endpointTestdb } from '../fixtures/datasources/endpointTestdb.datasource';
-import { Collection, Category, Product, Friend, ProductField } from '../../models';
+import { Collection, Category, Product, Friend, ProductField, Message } from '../../models';
 
 export async function givenEmptyEndpointDatabase() {
   await new ProductRepository(endpointTestdb).deleteAll();
@@ -88,3 +88,20 @@ export function givenProductFieldData(data?: Partial<ProductField>) {
 export async function givenProductField(data?: Partial<ProductField>) {
   return new ProductFieldRepository(endpointTestdb).create(givenProductFieldData(data));
 }
+
+//* 7.Message
+export function givenMessageData(data?: Partial<Message>) {
+  return Object.assign(
+    {
+      content: 'testMessage',
+      senderUser: '00001',
+      receiverUser: '00002',
+    },
+    data,
+  );
+}
+
+export async function givenMessageField(data?: Partial<Message>) {
+  return new MessageRepository(endpointTestdb).create(givenMessageData(data));
+}
+
