@@ -1,5 +1,6 @@
 # Tfg Backend
 [![CI](https://github.com/CollStacker/TFG-Backend/actions/workflows/main.yml/badge.svg)](https://github.com/CollStacker/TFG-Backend/actions/workflows/main.yml)
+![NPM Version](https://img.shields.io/npm/v/npm)
 
 This application is generated using [LoopBack 4 CLI](https://loopback.io/doc/en/lb4/Command-line-interface.html) with the
 [initial project layout](https://loopback.io/doc/en/lb4/Loopback-application-layout.html).
