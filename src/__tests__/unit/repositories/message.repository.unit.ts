@@ -12,7 +12,6 @@ describe('Message repository unit test', () => {
     messageData = {
       _id: '1',
       content: 'testMessage',
-      date: "2024-04-03T15:35:36.588Z",
       senderUser: '1',
       receiverUser: '2',
     };
@@ -26,7 +25,6 @@ describe('Message repository unit test', () => {
   it('Create a new message', async () => {
     const createdMessage = await messageRepository.create({
       content: 'testMessage',
-      date: "2024-04-03T15:35:36.588Z",
       senderUser: '1',
       receiverUser: '2',
     });
@@ -36,7 +34,6 @@ describe('Message repository unit test', () => {
   it('Find message by id', async () => {
     const createdMessage = await messageRepository.create({
       content: 'testMessage',
-      date: "2024-04-03T15:35:36.588Z",
       senderUser: '1',
       receiverUser: '2',
     });
@@ -47,7 +44,6 @@ describe('Message repository unit test', () => {
   it('Updates a message', async () => {
     const createdMessage = await messageRepository.create({
       content: 'testMessage',
-      date: "2024-04-03T15:35:36.588Z",
       senderUser: '1',
       receiverUser: '2',
     });
@@ -69,7 +65,6 @@ describe('Message repository unit test', () => {
   it('Delete a message', async () => {
     const createdMessage = await messageRepository.create({
       content: 'testMessage',
-      date: "2024-04-03T15:35:36.588Z",
       senderUser: '1',
       receiverUser: '2',
     });

@@ -116,7 +116,6 @@ export function givenMessageData(data?: Partial<Message>) {
   return Object.assign(
     {
       content: 'testMessage',
-      date: new Date(),
       senderUser: '00001',
       receiverUser: '00002',
     },

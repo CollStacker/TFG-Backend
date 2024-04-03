@@ -13,7 +13,6 @@ describe('Message model unit test', () => {
   it('Assingns properties correctly', () => {
     const messageData = givenMessageData({
       content: 'testMessage',
-      date: new Date(),
       senderUser: '1',
       receiverUser: '2',
     },);
