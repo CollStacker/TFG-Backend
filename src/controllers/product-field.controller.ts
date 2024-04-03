@@ -19,7 +19,9 @@ import {
 } from '@loopback/rest';
 import {ProductField} from '../models';
 import {ProductFieldRepository} from '../repositories';
+import {authenticate} from '@loopback/authentication';
 
+@authenticate('jwt')
 export class ProductFieldController {
   constructor(
     @repository(ProductFieldRepository)

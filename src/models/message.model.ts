@@ -17,9 +17,8 @@ export class Message extends Entity {
 
   @property({
     type: 'date',
-    required: true,
   })
-  date: Date | string;
+  date: Date;
 
   @property({
     type: 'string',
