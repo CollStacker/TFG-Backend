@@ -17,7 +17,7 @@ import {
   del,
   response,
   param,
-  patch,
+  patch
 } from '@loopback/rest';
 import {SecurityBindings, securityId, UserProfile} from '@loopback/security';
 import {genSalt, hash} from 'bcryptjs';
@@ -229,22 +229,43 @@ export class UserController {
   }
 
   @authenticate('jwt')
-  @get('/userData/{id}')
+  @get('/userData/{email}')
   @response(204, {
     description: 'Acces to user relevant data.',
   })
   async getUserRelevantData(
-    @param.path.string('id') id: string,
+    @param.path.string('email') email: string,
   ): Promise<UserRelevantData> {
-    const user = await this.userRepository.findById(id);
-    const relevantData: UserRelevantData = {
-      email: user.email,
-      username: user.username,
-      name: user.name,
-      surnames: user.usernames,
-      biography: user.biography,
-      profilePhoto: user.profilePhoto,
-    };
-    return relevantData;
+    const user = await this.userRepository.findOne({where: {email: email}});
+    if (user) {
+      const relevantData: UserRelevantData = {
+        id: user.id,
+        email: user.email,
+        username: user.username,
+        name: user.name,
+        surnames: user.surnames,
+        biography: user.biography,
+        profilePhoto: user.profilePhoto,
+      };
+      return relevantData;
+    } else {
+      throw new HttpError(400, 'User not found');
+    }
+  }
+
+  @authenticate('jwt')
+  @patch('/updateUser/{id}')
+  async updateUser(
+  @param.path.string('id') id: string,
+  @requestBody({
+    content: {
+      'application/json': {
+        schema: getModelSchemaRef(NewUserRequest, {partial: true}),
+      },
+    },
+  })
+  user: NewUserRequest,
+  ): Promise<void> {
+    await this.userRepository.updateById(id, user);
   }
 }
