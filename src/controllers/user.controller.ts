@@ -17,7 +17,7 @@ import {
   del,
   response,
   param,
-  patch,
+  patch
 } from '@loopback/rest';
 import {SecurityBindings, securityId, UserProfile} from '@loopback/security';
 import {genSalt, hash} from 'bcryptjs';
@@ -29,6 +29,7 @@ import {
   FriendsController,
   CollectionController,
   ProductController,
+  ProductFieldController
 } from '../controllers';
 import {HttpError} from '../utils/http-error';
 import {parseFriendRequestBody} from '../utils/utilities';
@@ -43,6 +44,8 @@ export class UserController {
     protected collectionController: CollectionController,
     @inject('controllers.ProductController')
     protected productController: ProductController,
+    @inject('controllers.ProductFieldController')
+    protected productFieldController: ProductFieldController,
     @inject(TokenServiceBindings.TOKEN_SERVICE)
     public jwtService: TokenService,
     @inject(UserServiceBindings.USER_SERVICE)
@@ -165,6 +168,15 @@ export class UserController {
     description: 'User account DELETE success.',
   })
   async deleteUser(@param.path.string('id') id: string): Promise<void> {
+    // First delete all friends
+    const userFriendEntry = await this.friendsController.findById(id);
+    if (userFriendEntry) {
+      if (userFriendEntry.friends) {
+        for (const friend of userFriendEntry.friends) {
+          await this.friendsController.deleteFriend({currentUserId: id, friendUsername: friend})
+        }
+      }
+    }
     // Delete user from Friend table
     await this.friendsController.deleteUserEntry(id);
     const collections = await this.collectionController.getUserCollections(id);
@@ -176,8 +188,17 @@ export class UserController {
             await this.productController.getCollectionProducts(collection._id);
           if (collectionProducts) {
             for (const product of collectionProducts) {
-              if (product._id)
+              if (product._id) {
+                // Delete product fields
+                const productFields = await this.productFieldController.findById(product._id);
+                if(productFields) {
+                  for (const productField of productFields) {
+                    if (productField._id)
+                      await this.productFieldController.deleteById(productField._id)
+                  }
+                }
                 await this.productController.deleteById(product._id);
+              }
             }
           }
           // Delete all user products inside his collections
@@ -187,6 +208,8 @@ export class UserController {
     }
     // Finally Delete user
     await this.userRepository.deleteById(id);
+    // Also delete his entry in UserCredentials table
+    await this.userRepository.userCredentials(id).delete();
   }
 
   @authenticate('jwt')
@@ -229,22 +252,43 @@ export class UserController {
   }
 
   @authenticate('jwt')
-  @get('/userData/{id}')
+  @get('/userData/{email}')
   @response(204, {
     description: 'Acces to user relevant data.',
   })
   async getUserRelevantData(
-    @param.path.string('id') id: string,
+    @param.path.string('email') email: string,
   ): Promise<UserRelevantData> {
-    const user = await this.userRepository.findById(id);
-    const relevantData: UserRelevantData = {
-      email: user.email,
-      username: user.username,
-      name: user.name,
-      surnames: user.usernames,
-      biography: user.biography,
-      profilePhoto: user.profilePhoto,
-    };
-    return relevantData;
+    const user = await this.userRepository.findOne({where: {email: email}});
+    if (user) {
+      const relevantData: UserRelevantData = {
+        id: user.id,
+        email: user.email,
+        username: user.username,
+        name: user.name,
+        surnames: user.surnames,
+        biography: user.biography,
+        profilePhoto: user.profilePhoto,
+      };
+      return relevantData;
+    } else {
+      throw new HttpError(400, 'User not found');
+    }
+  }
+
+  @authenticate('jwt')
+  @patch('/updateUser/{id}')
+  async updateUser(
+  @param.path.string('id') id: string,
+  @requestBody({
+    content: {
+      'application/json': {
+        schema: getModelSchemaRef(NewUserRequest, {partial: true}),
+      },
+    },
+  })
+  user: NewUserRequest,
+  ): Promise<void> {
+    await this.userRepository.updateById(id, user);
   }
 }

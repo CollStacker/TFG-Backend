@@ -1,4 +1,5 @@
 export interface UserRelevantData {
+  id: string,
   email: string,
   username?: string,
   name: string,
