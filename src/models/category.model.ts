@@ -18,7 +18,7 @@ export class Category extends Entity {
   @property({
     type: 'string',
   })
-  description: String;
+  description?: String;
 
   @property({
     type: 'string',
