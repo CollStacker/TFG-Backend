@@ -27,14 +27,22 @@ export class Product extends Entity {
   image?: string;
 
   @property({
-    type: 'string',
+    type: 'date',
+    required: false,
   })
-  releaseYear?: string;
+  publicationDate?: Date;
 
   @property({
-    type: 'string',
+    type: 'boolean',
+    required: false,
   })
-  brand?: string;
+  isMarkable?: Boolean;
+
+  @property({
+    type: 'boolean',
+    required: false,
+  })
+  checked?: Boolean;
 
   @property({
     type: 'string',

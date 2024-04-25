@@ -30,8 +30,6 @@ export const productFirstExample = {
   name: 'testProduct1',
   description: 'testDesc',
   image: 'testImage',
-  releaseYear: '1234',
-  brand: 'testBrand',
   collectionId: '1',
 };
 
@@ -39,8 +37,6 @@ export const productSecondExample = {
   name: 'testProduct2',
   description: 'testDesc',
   image: 'testImage',
-  releaseYear: '1234',
-  brand: 'testBrand',
   collectionId: '1',
 };
 
@@ -48,8 +44,6 @@ export const productThirdExample = {
   name: 'testProduct3',
   description: 'testDesc',
   image: 'testImage',
-  releaseYear: '1234',
-  brand: 'testBrand',
   collectionId: '1',
 };
 
@@ -57,8 +51,6 @@ export const productFourthExample = {
   name: 'testProduct4',
   description: 'testDesc',
   image: 'testImage',
-  releaseYear: '1234',
-  brand: 'testBrand',
   collectionId: '2',
   getId: () => {},
   getIdObject: Object,
