@@ -33,18 +33,6 @@ export class Product extends Entity {
   publicationDate?: Date;
 
   @property({
-    type: 'boolean',
-    required: false,
-  })
-  isMarkable?: Boolean;
-
-  @property({
-    type: 'boolean',
-    required: false,
-  })
-  checked?: Boolean;
-
-  @property({
     type: 'string',
     required: true,
   })
