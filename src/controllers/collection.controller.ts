@@ -12,7 +12,7 @@ import {
   get,
   getModelSchemaRef,
   patch,
-  // put,
+  put,
   del,
   requestBody,
   response,
@@ -159,16 +159,16 @@ export class CollectionController {
     await this.collectionRepository.updateById(id, collection);
   }
 
-  // @put('/collections/{id}')
-  // @response(204, {
-  //   description: 'Collection PUT success',
-  // })
-  // async replaceById(
-  //   @param.path.string('id') id: string,
-  //   @requestBody() collection: Collection,
-  // ): Promise<void> {
-  //   await this.collectionRepository.replaceById(id, collection);
-  // }
+  @put('/collections/{id}')
+  @response(204, {
+    description: 'Collection PUT success',
+  })
+  async replaceById(
+    @param.path.string('id') id: string,
+    @requestBody() collection: Collection,
+  ): Promise<void> {
+    await this.collectionRepository.replaceById(id, collection);
+  }
 
   @del('/collections/{id}')
   @response(204, {
