@@ -23,13 +23,13 @@ export class Collection extends Entity {
   @property({
     type: 'string',
   })
-  tag: string;
+  tag?: string;
 
   //* An front image about the collection items
   @property({
     type: 'string',
   })
-  frontPage: string;
+  frontPage?: string;
 
   @property({
     type: 'string',

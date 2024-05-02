@@ -41,8 +41,6 @@ describe('Product controller test', () => {
       name: 'testProduct4',
       description: 'testDesc',
       image: 'testImage',
-      releaseYear: '1234',
-      brand: 'testBrand',
       collectionId: '2',
     };
     expect(createdProduct.toJSON()).to.deepEqual(expectedProduct);

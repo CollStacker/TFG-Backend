@@ -27,14 +27,10 @@ export class Product extends Entity {
   image?: string;
 
   @property({
-    type: 'string',
+    type: 'date',
+    required: false,
   })
-  releaseYear?: string;
-
-  @property({
-    type: 'string',
-  })
-  brand?: string;
+  publicationDate?: Date;
 
   @property({
     type: 'string',
