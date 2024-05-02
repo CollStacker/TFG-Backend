@@ -49,6 +49,37 @@ export class ProductFieldController {
     return this.productFieldRepository.create(productField);
   }
 
+  @post('/product-fields-many')
+  @response(200, {
+    description: 'Array of ProductField model instances',
+    content: {'application/json': {schema: {type: 'array', items: getModelSchemaRef(ProductField)}}},
+  })
+  async createMany(
+    @requestBody({
+      content: {
+        'application/json': {
+          schema: {
+            type: 'array',
+            items: getModelSchemaRef(ProductField, {
+              title: 'NewProductField',
+              exclude: ['_id'],
+            }),
+          },
+        },
+      },
+    })
+    productFields: ProductField[],
+  ): Promise<ProductField[]> {
+    const createdProductFields: ProductField[] = [];
+
+    for (const field of productFields) {
+      const createdField = await this.productFieldRepository.create(field);
+      createdProductFields.push(createdField);
+    }
+
+    return createdProductFields;
+  }
+
   // @get('/product-fields/count')
   // @response(200, {
   //   description: 'ProductField model count',
