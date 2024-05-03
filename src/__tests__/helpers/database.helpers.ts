@@ -1,5 +1,5 @@
-import {ProductRepository, CategoryRepository, CollectionRepository, FriendRepository, ProductFieldRepository, MessageRepository} from '../../repositories';
-import {Product, Category, Collection, Friend, ProductField, Message} from '../../models'
+import {ProductRepository, CategoryRepository, CollectionRepository, FriendRepository, ProductFieldRepository, MessageRepository, FriendsRequestRepository} from '../../repositories';
+import {Product, Category, Collection, Friend, ProductField, Message, FriendsRequest} from '../../models'
 import {testdb} from '../fixtures/datasources/testdb.datasource';
 
 export async function givenEmptyDatabase() {
@@ -31,12 +31,13 @@ export async function givenEmptyDatabase() {
 //   return new UserRepository(testdb).create(givenUserData(data));
 // }
 
-//* 2. Friend
+//* 2. Friend && FriendRequest
 export function givenFriendData(data?: Partial<Friend>) {
   return Object.assign(
     {
       // _id: '00002',
-      userId: '00001'
+      userId: '00001',
+      friendId: '00002'
     },
     data,
   );
@@ -44,6 +45,21 @@ export function givenFriendData(data?: Partial<Friend>) {
 
 export async function givenFriend(data?: Partial<Friend>) {
   return new FriendRepository(testdb).create(givenFriendData(data));
+}
+
+export function givenFriendRequestData(data?: Partial<FriendsRequest>) {
+  return Object.assign(
+    {
+      // _id: '00002',
+      userId: '00001',
+      requestUserId: '00002'
+    },
+    data,
+  );
+}
+
+export async function givenFriendRequest(data?: Partial<FriendsRequest>) {
+  return new FriendsRequestRepository(testdb).create(givenFriendData(data));
 }
 
 //* 3. Collection
