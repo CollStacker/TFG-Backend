@@ -43,6 +43,13 @@ describe('Product-field controller test', () => {
     expect(createdProductField.toJSON()).to.deepEqual(expectedResult);
   });
 
+  it('Create multiple productField entries', async () => {
+    const createdProductField = await productFieldController.createMany(
+      [productFieldFirstExample,productFieldFirstExample],
+    );
+    expect(createdProductField.length).to.equal(2);
+  });
+
   it('Find every custom field from a determianted product', async () => {
     const expectedCustomFields = [secondProductField, thirdProductField];
     const foundedCustomFields = await productFieldController.findById('1');
