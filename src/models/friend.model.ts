@@ -16,17 +16,10 @@ export class Friend extends Entity {
   userId: string;
 
   @property({
-    type: 'array',
-    itemType: 'string',
+    type: 'string',
+    required: true,
   })
-  friends?: string[];
-
-  @property({
-    type: 'array',
-    itemType: 'string',
-    required: false
-  })
-  friendRequestList?: string[];
+  friendId: string;
 
   constructor(data?: Partial<Friend>) {
     super(data);
