@@ -32,7 +32,7 @@ import {
   ProductFieldController
 } from '../controllers';
 import {HttpError} from '../utils/http-error';
-import {parseFriendRequestBody} from '../utils/utilities';
+// import {parseFriendRequestBody} from '../utils/utilities';
 import {compare} from 'bcrypt';
 import {UserRelevantData} from '../interfaces/userRelevantData.interface';
 
@@ -158,7 +158,7 @@ export class UserController {
     await this.userRepository.userCredentials(savedUser.id).create({password});
 
     //Saving UserId in Friend table
-    await this.friendsController.create(parseFriendRequestBody(savedUser.id));
+    // await this.friendsController.create(parseFriendRequestBody(savedUser.id));
     return savedUser;
   }
 
@@ -169,16 +169,9 @@ export class UserController {
   })
   async deleteUser(@param.path.string('id') id: string): Promise<void> {
     // First delete all friends
-    const userFriendEntry = await this.friendsController.findById(id);
-    if (userFriendEntry) {
-      if (userFriendEntry.friends) {
-        for (const friend of userFriendEntry.friends) {
-          await this.friendsController.deleteFriend({currentUserId: id, friendUsername: friend})
-        }
-      }
-    }
-    // Delete user from Friend table
-    await this.friendsController.deleteUserEntry(id);
+    await this.friendsController.deleteFriendRelationships(id);
+    await this.friendsController.deleteFriendRequestEntries(id);
+    
     const collections = await this.collectionController.getUserCollections(id);
     if (collections) {
       for (const collection of collections) {

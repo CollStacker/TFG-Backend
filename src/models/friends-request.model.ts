@@ -19,7 +19,7 @@ export class FriendsRequest extends Entity {
     type: 'string',
     required: true,
   })
-  friendId: string;
+  requestUserId: string;
 
 
   constructor(data?: Partial<FriendsRequest>) {
