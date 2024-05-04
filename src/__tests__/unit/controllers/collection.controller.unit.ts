@@ -65,6 +65,16 @@ describe('Collection controller test', () => {
     expect(updatedCollection.description).to.equal('newDescr');
   })
 
+  it('Update entry from collection database', async () => {
+    const newCollection = {
+      ...collectionThirdExample,
+      description: 'newDescr'
+    };
+    await collectionController.replaceById('3',newCollection);
+    const updatedCollection = await collectionRepository.findById('3');
+    expect(updatedCollection.description).to.equal('newDescr');
+  });
+
   it('Delete entry from collection database', async () => {
     try {
       await collectionController.deleteById('3');
@@ -73,4 +83,5 @@ describe('Collection controller test', () => {
       expect(error.message).to.equal('Entity not found: Collection with id "3"')
     }
   })
+
 })

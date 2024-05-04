@@ -5,3 +5,4 @@ export * from './product.repository';
 export * from './friend.repository';
 export * from './product-field.repository';
 export * from './message.repository';
+export * from './friends-request.repository';

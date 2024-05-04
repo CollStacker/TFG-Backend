@@ -12,7 +12,7 @@ describe('Friend repository unit test', () => {
     friendData = {
       _id: '1',
       userId: '1',
-      friends: ['2', '3'],
+      friendId: '2',
     };
   });
 
@@ -24,7 +24,7 @@ describe('Friend repository unit test', () => {
   it('Create a new friend', async () => {
     const createdFriend = await friendRepository.create({
       userId: '1',
-      friends: ['2', '3'],
+      friendId: '2',
     });
     expect(createdFriend.toJSON()).to.deepEqual(friendData);
   });
@@ -32,7 +32,7 @@ describe('Friend repository unit test', () => {
   it('Find user by id', async () => {
     const createdFriend = await friendRepository.create({
       userId: '1',
-      friends: ['2', '3'],
+      friendId: '2',
     });
     const friendById = await friendRepository.findById(createdFriend._id);
     expect(friendById.toJSON()).to.deepEqual(createdFriend.toJSON());
@@ -41,11 +41,11 @@ describe('Friend repository unit test', () => {
   it('Updates a friend', async () => {
     const createdFriend = await friendRepository.create({
       userId: '1',
-      friends: ['2', '3'],
+      friendId: '2',
     });
     const modifiedFriend: Friend = {
       ...createdFriend,
-      friends: ['4', '5'],
+      friendId: '3',
       getId: () => {},
       getIdObject: Object,
       toJSON: Object,
@@ -55,13 +55,13 @@ describe('Friend repository unit test', () => {
     const foundedUpdatedFriend = await friendRepository.findById(
       createdFriend._id,
     );
-    expect(foundedUpdatedFriend.friends).to.deepEqual(['4', '5']);
+    expect(foundedUpdatedFriend.friendId).to.deepEqual('3');
   });
 
   it('Delete a friend', async () => {
     const createdFriend = await friendRepository.create({
       userId: '1',
-      friends: ['2', '3'],
+      friendId: '2',
     });
     const createdFriendId = createdFriend._id;
     try {

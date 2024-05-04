@@ -1,7 +1,7 @@
 import {Entity, model, property} from '@loopback/repository';
 
 @model()
-export class Friend extends Entity {
+export class FriendsRequest extends Entity {
   @property({
     type: 'string',
     id: true,
@@ -19,15 +19,16 @@ export class Friend extends Entity {
     type: 'string',
     required: true,
   })
-  friendId: string;
+  requestUserId: string;
 
-  constructor(data?: Partial<Friend>) {
+
+  constructor(data?: Partial<FriendsRequest>) {
     super(data);
   }
 }
 
-export interface FriendRelations {
+export interface FriendsRequestRelations {
   // describe navigational properties here
 }
 
-export type FriendWithRelations = Friend & FriendRelations;
+export type FriendsRequestWithRelations = FriendsRequest & FriendsRequestRelations;
