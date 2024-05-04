@@ -1,185 +1,201 @@
-// import {endpointTestdb} from '../../fixtures/datasources/endpointTestdb.datasource';
-// // import { givenFriend } from '../../helpers/endpointDatabase.helpers';
-// import {expect} from '@loopback/testlab';
-// import {FriendsController} from '../../../controllers';
-// import {FriendRepository} from '../../../repositories';
-// import {UserRepository} from '@loopback/authentication-jwt';
-// import {UserCredentialsRepository} from '@loopback/authentication-jwt';
-// // import { Friend } from '../../../models';
-// import {
-//   friendFirstExample,
-//   friendSecondExample,
-//   friendThirdExample,
-//   friendFourthExample,
-//   userFirstExample,
-//   userSecondExample,
-//   userThirdExample,
-// } from '../../data/endpointTest.data';
+import {endpointTestdb} from '../../fixtures/datasources/endpointTestdb.datasource';
+// import { givenFriend } from '../../helpers/endpointDatabase.helpers';
+import {expect} from '@loopback/testlab';
+import {FriendsController} from '../../../controllers';
+import {FriendRepository,FriendsRequestRepository} from '../../../repositories';
+import {UserRepository,} from '@loopback/authentication-jwt';
+import {UserCredentialsRepository} from '@loopback/authentication-jwt';
+// import { Friend } from '../../../models';
+import {
+  // friendFirstExample,
+  // friendSecondExample,
+  // friendThirdExample,
+  // friendFourthExample,
+  // userFirstExample,
+  // userSecondExample,
+  // userThirdExample,
+} from '../../data/endpointTest.data';
 
-// describe('Friends controller test', () => {
-//   let friendController: FriendsController;
-//   let friendRepository: FriendRepository;
-//   let userRepository: UserRepository;
+describe('Friends controller test', () => {
+  let friendController: FriendsController;
+  let friendRepository: FriendRepository;
+  let userRepository: UserRepository;
+  let friendRequestRepository: FriendsRequestRepository;
 
-//   beforeEach(async () => {
-//     const userCredentialsRepository = new UserCredentialsRepository(
-//       endpointTestdb,
-//     );
-//     userRepository = new UserRepository(
-//       endpointTestdb,
-//       async () => userCredentialsRepository,
-//     );
-//     friendRepository = new FriendRepository(endpointTestdb);
-//     friendController = new FriendsController(userRepository, friendRepository);
-//   });
+  beforeEach(async () => {
+    const userCredentialsRepository = new UserCredentialsRepository(
+      endpointTestdb,
+    );
+    userRepository = new UserRepository(
+      endpointTestdb,
+      async () => userCredentialsRepository,
+    );
+    friendRepository = new FriendRepository(endpointTestdb);
+    friendRequestRepository = new FriendsRequestRepository(endpointTestdb)
+    friendController = new FriendsController(userRepository, friendRepository, friendRequestRepository);
+  });
 
-//   after(async () => {
-//     await friendRepository.deleteAll();
-//   });
+  after(async () => {
+    await friendRepository.deleteAll();
+  });
 
-//   it('Create a friend entry', async () => {
-//     const createdFriend = await friendController.create(friendFirstExample);
-//     const expectedResult = {
-//       _id: '1',
-//       userId: '1',
-//       friends: ['2', '3'],
-//     };
-//     expect(createdFriend.toJSON()).to.deepEqual(expectedResult);
-//   });
+  it('Send friend request', async () => {
+    const friendRequestBody = {
+      userId: '1',
+      requestUserId: '2',
+    };
+    const createdFriendRequest = await friendController.sendFriendRequest(
+      friendRequestBody,
+    );
+    const expectedResult = {
+      _id: '1',
+      userId: '1',
+      requestUserId: '2',
+    };
+    expect(createdFriendRequest.toJSON()).to.deepEqual(expectedResult);
+  })
 
-//   it('Get a friend entry by ID from the bbdd', async () => {
-//     const foundedFriend = await friendController.findById('1');
-//     expect(foundedFriend._id).to.equal('1');
-//     expect(foundedFriend.userId).to.equal('1');
-//     expect(foundedFriend.friends).to.deepEqual(['2', '3']);
-//   });
+  it('Try to send a request that already exist', async () => {
+    const friendRequestBody = {
+      userId: '1',
+      requestUserId: '2',
+    };
+    try {
+      await friendController.sendFriendRequest(friendRequestBody);
+    } catch (error) {
+      expect(error.message).to.be.equal('Error!. Friend request already exists.');
+    }
+  })
 
-//   it('Update friend entry', async () => {
-//     const updatedFriend = {
-//       ...friendFirstExample,
-//       friends: ['1', '1', '1'],
-//     };
-//     await friendController.updateById('1', updatedFriend);
-//     expect(updatedFriend.friends).to.deepEqual(['1', '1', '1']);
-//   });
+  it('Refuse friend request', async () => {
+    const friendRequestBody = {
+      userId: '2',
+      requestUserId: '1',
+    };
+    await friendController.refuseFriendRequest(friendRequestBody);
+    const foundedRequest = await friendRequestRepository.findOne({where: {userId: friendRequestBody.userId, requestUserId: friendRequestBody.requestUserId}});
+    expect(foundedRequest).to.be.null();
+  })
 
-//   it('Delete a friend entry', async () => {
-//     try {
-//       await friendController.deleteById('1');
-//       await friendController.findById('1');
-//     } catch (error) {
-//       expect(error.message).to.equal('Entity not found: Friend with id "1"');
-//     }
-//   });
+  it(' Accepting wrong friend request', async () => {
+    const friendRequestBody = {
+      userId: '1',
+      requestUserId: '2',
+    };
+    try{
+      await friendController.acceptFriendRequest(friendRequestBody);
+    } catch (error) {
+      expect(error.message).to.be.equal('Error!. There aren`t any request for that user');
+    }
+  })
 
-//   it('Delete a friend entry when an user account have been deleted', async () => {
-//     await friendRepository.create(friendFirstExample);
-//     try {
-//       await friendController.deleteUserEntry('1');
-//       await friendRepository.findById('1');
-//     } catch (error) {
-//       expect(error.message).to.equal('Entity not found: Friend with id "1"');
-//     }
-//   });
+  it('Accept friend request', async () => {
+    const friendRequestBody = {
+      userId: '1',
+      requestUserId: '2',
+    };
+    await friendController.sendFriendRequest(friendRequestBody);
+    await friendController.acceptFriendRequest({userId: '2', requestUserId: '1'});
+    const foundedFriend = await friendRepository.findOne({where: {userId: friendRequestBody.requestUserId, friendId: friendRequestBody.userId}});
+    const expectedResult = {
+      _id: '1',
+      userId: '2',
+      friendId: '1',
+    };
+    expect(foundedFriend ? foundedFriend.toJSON() : '').to.deepEqual(expectedResult);
+  })
 
-//   it('Trying to delete friend entry giving non exist id', async () => {
-//     try {
-//       await friendController.deleteUserEntry('10');
-//     } catch (error) {
-//       expect(error.message).to.equal(
-//         'There are not any entry in the db for that user.',
-//       );
-//     }
-//   });
+  it('Delete friend', async () => {
+    await friendController.deleteFriend({userId: '2', friendId: '1'});
+    const foundedFriend = await friendRepository.findOne({where: {userId: '2', friendId: '1'}});
+    expect(foundedFriend).to.be.null();
 
-//   it('Testing friend request behaviour', async () => {
-//     //* Users
-//     await userRepository.create(userFirstExample);
-//     await userRepository.create(userSecondExample);
-//     await userRepository.create(userThirdExample);
-//     //* Friends db entries
-//     await friendRepository.create(friendSecondExample);
-//     await friendRepository.create(friendThirdExample);
-//     await friendRepository.create(friendFourthExample);
-//     //* Send friend request when friendRequestArray empty
-//     await friendController.sendFriendRequest({
-//       currentUserId: '10',
-//       newFriendId: '11',
-//     });
-//     const foundedFriendList = await friendRepository.findOne({
-//       where: {userId: '11'},
-//     });
-//     if (foundedFriendList) {
-//       expect(foundedFriendList.friendRequestList).to.deepEqual(['10']);
-//     }
-//     //* Send friend request when friendRequestArray with one or more friend requests inside
-//     await friendController.sendFriendRequest({
-//       currentUserId: '12',
-//       newFriendId: '11',
-//     });
-//     const updatedFriendList = await friendRepository.findOne({
-//       where: {userId: '11'},
-//     });
-//     if (updatedFriendList) {
-//       expect(updatedFriendList.friendRequestList).to.deepEqual([
-//         '10',
-//         '12',
-//       ]);
-//     }
-//   });
+    const friendRequestBody = {
+      userId: '1',
+      requestUserId: '2',
+    };
+    await friendController.sendFriendRequest(friendRequestBody);
+    await friendController.acceptFriendRequest({userId: '2', requestUserId: '1'});
+    await friendController.deleteFriend({userId: '1', friendId: '2'});
+    const foundedFriendSecond = await friendRepository.findOne({where: {userId: '1', friendId: '2'}});
+    expect(foundedFriendSecond).to.be.null();
+  })
 
-//   it('Accept friend request', async () => {
-//     await friendController.acceptFriendRequest({
-//       currentUserId: '11',
-//       newFriendUsername: 'AdrianTest',
-//     });
-//     const currentUserFriendData = await friendRepository.findOne({
-//       where: {userId: '11'},
-//     });
-//     const newFriendFriendtData = await friendRepository.findOne({
-//       where: {userId: '10'},
-//     });
-//     expect(currentUserFriendData?.friendRequestList).not.to.containDeep(
-//       '10',
-//     );
-//     expect(currentUserFriendData?.friends).to.deepEqual(['AdrianTest']);
-//     expect(newFriendFriendtData?.friends).to.deepEqual(['ttt']);
-//   });
+  it('Try to delete friend that does not exist', async () => {
+    try {
+      await friendController.deleteFriend({userId: '2', friendId: '1'});
+    } catch (error) {
+      expect(error.message).to.be.equal('Error!. There aren`t any entry for that users');
+    }
+  });
 
-//   it('Refuse friend request', async () => {
-//     await friendController.refuseFriendRequest({
-//       currentUserId: '11',
-//       newFriendUsername: 'tttt',
-//     });
-//     const currentUserFriendData = await friendRepository.findOne({
-//       where: {userId: '11'},
-//     });
-//     expect(currentUserFriendData?.friendRequestList).not.to.containDeep(
-//       '12',
-//     );
-//   });
+  it('Delete friend relationshipts after deleting user', async () => {
+    const friendRequestBody = {
+      userId: '1',
+      requestUserId: '2',
+    };
+    const friendRequestBody2 = {
+      userId: '2',
+      requestUserId: '1',
+    };
+    await friendController.sendFriendRequest(friendRequestBody);
+    await friendController.sendFriendRequest(friendRequestBody2);
+    await friendController.acceptFriendRequest({userId: '2', requestUserId: '1'});
+    await friendController.acceptFriendRequest({userId: '1', requestUserId: '2'});
+    await friendController.deleteFriendRelationships('1');
+    const foundedFriend = await friendRepository.findOne({where: {userId: '1', friendId: '2'}});
+    expect(foundedFriend).to.be.null();
+  });
 
-//   it('Get all friends of determinated user', async () => {
-//     const everyCurrentFriends = await friendController.getFriends('11');
-//     expect(everyCurrentFriends).to.deepEqual(['AdrianTest']);
-//   });
+  it('Delete friend requests when deleting a user', async () => {
+    const friendRequestBody = {
+      userId: '5',
+      requestUserId: '6',
+    };
+    const friendRequestBody2 = {
+      userId: '6',
+      requestUserId: '5',
+    };
+    await friendController.sendFriendRequest(friendRequestBody);
+    await friendController.sendFriendRequest(friendRequestBody2);
+    await friendController.deleteFriendRequestEntries('6');
+    const foundedFriendRequest = await friendRequestRepository.findOne({where: {userId: '6'}});
+    expect(foundedFriendRequest).to.be.null();
+  })
 
-//   it('Get all friends from a unexist user', async () => {
-//     try {
-//       await friendController.getFriends('16');
-//     } catch (error) {
-//       expect(error.message).to.equal('User not found');
-//     }
-//   });
+  it('Get friend requests', async () => {
+    const friendRequestBody = {
+      userId: '7',
+      requestUserId: '8',
+    };
+    await friendController.sendFriendRequest(friendRequestBody);
+    const foundedFriendRequest = await friendController.getFriendRequest('8');
+    const expectedResult = {
+      _id: '8',
+      userId: '7',
+      requestUserId: '8',
+    };
+    expect(foundedFriendRequest ? foundedFriendRequest[0].toJSON() : '').to.deepEqual(expectedResult);
+    const foundedFriendRequestNull = await friendController.getFriendRequest('20');
+    expect(foundedFriendRequestNull).to.be.deepEqual([]);
+  })
 
-//   it('Delete friend', async () => {
-//     await friendController.deleteFriend({
-//       currentUserId: '11',
-//       friendUsername: 'AdrianTest',
-//     });
-//     const currentUserFriendData = await friendRepository.findOne({
-//       where: {userId: '11'},
-//     });
-//     expect(currentUserFriendData?.friends).not.to.containDeep('AdrianTest');
-//   });
-// });
+  it('Get friends', async () => {
+    const friendRequestBody = {
+      userId: '9',
+      requestUserId: '10',
+    };
+    const secondFriendRequestBody = {
+      userId: '10',
+      requestUserId: '11',
+    }
+    await friendController.sendFriendRequest(friendRequestBody);
+    await friendController.sendFriendRequest(secondFriendRequestBody);
+    await friendController.acceptFriendRequest({userId: '10', requestUserId: '9'});
+    await friendController.acceptFriendRequest({userId: '11', requestUserId: '10'});
+    const foundedFriends = await friendController.getFriends('10');
+    const expectedResult = ['9','11'];
+    expect(foundedFriends).to.deepEqual(expectedResult);
+  })
+
+});
