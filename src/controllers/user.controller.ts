@@ -171,7 +171,7 @@ export class UserController {
     // First delete all friends
     await this.friendsController.deleteFriendRelationships(id);
     await this.friendsController.deleteFriendRequestEntries(id);
-    
+
     const collections = await this.collectionController.getUserCollections(id);
     if (collections) {
       for (const collection of collections) {
@@ -283,5 +283,30 @@ export class UserController {
   user: NewUserRequest,
   ): Promise<void> {
     await this.userRepository.updateById(id, user);
+  }
+
+  @authenticate('jwt')
+  @get('/findUser/{username}')
+  @response(204, {
+    description: 'Acces to user relevant data.',
+  })
+  async findUserByUsername(
+    @param.path.string('username') username: string,
+  ): Promise<UserRelevantData> {
+    const user = await this.userRepository.findOne({where: {username: username}});
+    if (user) {
+      const relevantData: UserRelevantData = {
+        id: user.id,
+        email: user.email,
+        username: user.username,
+        name: user.name,
+        surnames: user.surnames,
+        biography: user.biography,
+        profilePhoto: user.profilePhoto,
+      };
+      return relevantData;
+    } else {
+      throw new HttpError(400, 'User not found');
+    }
   }
 }
