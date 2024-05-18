@@ -309,4 +309,29 @@ export class UserController {
       throw new HttpError(400, 'User not found');
     }
   }
+
+  @authenticate('jwt')
+  @get('/findUserById/{id}')
+  @response(204, {
+    description: 'Acces to user relevant data.',
+  })
+  async findUserById(
+    @param.path.string('id') id: string,
+  ): Promise<UserRelevantData> {
+    const user = await this.userRepository.findOne({where: {id: id}});
+    if (user) {
+      const relevantData: UserRelevantData = {
+        id: user.id,
+        email: user.email,
+        username: user.username,
+        name: user.name,
+        surnames: user.surnames,
+        biography: user.biography,
+        profilePhoto: user.profilePhoto,
+      };
+      return relevantData;
+    } else {
+      throw new HttpError(400, 'User not found');
+    }
+  }
 }
