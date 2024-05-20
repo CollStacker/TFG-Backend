@@ -109,6 +109,7 @@ export class ProductController {
             name: product.name,
             description: product.description,
             image: product.image,
+            publicationDate: product.publicationDate,
             ownerId: collection.ownerId as string,
           }
           productData.push(newProductData);
