@@ -18,8 +18,9 @@ import {
   response,
 } from '@loopback/rest';
 import {Product} from '../models';
-import {ProductRepository} from '../repositories';
+import {ProductRepository, CollectionRepository} from '../repositories';
 import {authenticate} from '@loopback/authentication';
+import { type HomeViewProductDataInterface } from '../interfaces/homeViewProductData.interface';
 
 //* This decorator protects the API and the endpoints of CategoryController
 @authenticate('jwt')
@@ -27,6 +28,8 @@ export class ProductController {
   constructor(
     @repository(ProductRepository)
     public productRepository: ProductRepository,
+    @repository(CollectionRepository)
+    public collectionRepository: CollectionRepository,
   ) {}
 
   @post('/products')
@@ -89,23 +92,32 @@ export class ProductController {
   //   return this.productRepository.count(where);
   // }
 
-  // @get('/products')
-  // @response(200, {
-  //   description: 'Array of Product model instances',
-  //   content: {
-  //     'application/json': {
-  //       schema: {
-  //         type: 'array',
-  //         items: getModelSchemaRef(Product, {includeRelations: true}),
-  //       },
-  //     },
-  //   },
-  // })
-  // async find(
-  //   @param.filter(Product) filter?: Filter<Product>,
-  // ): Promise<Product[]> {
-  //   return this.productRepository.find(filter);
-  // }
+  @get('/products')
+  async find(): Promise<HomeViewProductDataInterface[]> {
+    const productData: HomeViewProductDataInterface[] = [];
+    const filter = {
+      limit: 20,
+      order: ['createdAt DESC'],
+    };
+    const products = await this.productRepository.find(filter);
+    if(products) {
+      for (const product of products) {
+        const collection = await this.collectionRepository.findOne({where :{_id: product.collectionId as string}});
+        if (collection){
+          const newProductData:HomeViewProductDataInterface = {
+            _id: product._id as string,
+            name: product.name,
+            description: product.description,
+            image: product.image,
+            publicationDate: product.publicationDate,
+            ownerId: collection.ownerId as string,
+          }
+          productData.push(newProductData);
+        }
+      }
+    }
+    return productData;
+  }
 
   // @patch('/products')
   // @response(200, {

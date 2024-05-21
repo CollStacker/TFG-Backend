@@ -1,7 +1,7 @@
 import {expect} from '@loopback/testlab';
 import {givenProduct} from '../../helpers/endpointDatabase.helpers';
 import {endpointTestdb} from '../../fixtures/datasources/endpointTestdb.datasource';
-import {ProductRepository} from '../../../repositories';
+import {ProductRepository, CollectionRepository} from '../../../repositories';
 import {ProductController} from '../../../controllers';
 import {Product} from '../../../models';
 import {
@@ -14,7 +14,7 @@ import {
 describe('Product controller test', () => {
   let productController: ProductController;
   let productRepository: ProductRepository;
-
+  let collectionRepository: CollectionRepository;
   // data
   let firstProduct: Product;
   let secondProduct: Product;
@@ -27,7 +27,8 @@ describe('Product controller test', () => {
 
   beforeEach(async () => {
     productRepository = new ProductRepository(endpointTestdb);
-    productController = new ProductController(productRepository);
+    collectionRepository = new CollectionRepository(endpointTestdb);
+    productController = new ProductController(productRepository,collectionRepository);
   });
 
   after(async () => {
