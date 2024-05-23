@@ -19,7 +19,9 @@ import {
 } from '@loopback/rest';
 import {ProductComments} from '../models';
 import {ProductCommentsRepository, ProductRepository} from '../repositories';
+import {authenticate} from '@loopback/authentication';
 
+@authenticate('jwt')
 export class ProductCommentController {
   constructor(
     @repository(ProductCommentsRepository)
