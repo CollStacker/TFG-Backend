@@ -5,7 +5,8 @@
     "dist/controllers/user.controller.js",
     "dist/application.js",
     "dist/sequence.js",
-    "dist/controllers/websocket-chat.controller.js"
+    "dist/controllers/websocket-chat.controller.js",
+    "dist/controllers/message.controller.js"
   ],
   "extension": [".js", ".ts"],
   "reporter": ["text", "html"],
