@@ -43,6 +43,7 @@ describe('Product controller test', () => {
       description: 'testDesc',
       image: 'testImage',
       collectionId: '2',
+      likes: 0,
     };
     expect(createdProduct.toJSON()).to.deepEqual(expectedProduct);
   });

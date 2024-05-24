@@ -31,6 +31,7 @@ export const productFirstExample = {
   description: 'testDesc',
   image: 'testImage',
   collectionId: '1',
+  likes: 0,
 };
 
 export const productSecondExample = {
@@ -38,6 +39,7 @@ export const productSecondExample = {
   description: 'testDesc',
   image: 'testImage',
   collectionId: '1',
+  likes: 0,
 };
 
 export const productThirdExample = {
@@ -45,6 +47,7 @@ export const productThirdExample = {
   description: 'testDesc',
   image: 'testImage',
   collectionId: '1',
+  likes: 0,
 };
 
 export const productFourthExample = {
@@ -52,6 +55,7 @@ export const productFourthExample = {
   description: 'testDesc',
   image: 'testImage',
   collectionId: '2',
+  likes: 0,
   getId: () => {},
   getIdObject: Object,
   toJSON: Object,

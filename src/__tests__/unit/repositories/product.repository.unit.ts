@@ -13,7 +13,8 @@ describe('Product repository unit test', () => {
       _id: '1',
       name: 'testProduct',
       image: 'testImage',
-      collectionId: '00003'
+      collectionId: '00003',
+      likes: 0,
     };
   });
 
