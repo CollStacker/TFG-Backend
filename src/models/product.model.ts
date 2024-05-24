@@ -38,6 +38,12 @@ export class Product extends Entity {
   })
   collectionId: String;
 
+  @property({
+    type: 'number',
+    default: 0,
+  })
+  likes?: number
+
   constructor(data?: Partial<Product>) {
     super(data);
   }

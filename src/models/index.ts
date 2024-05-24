@@ -6,3 +6,4 @@ export * from './product-field.model';
 export * from './message.model';
 export * from './friends-request.model';
 export * from './product-comments.model';
+export * from './product-like.model';
