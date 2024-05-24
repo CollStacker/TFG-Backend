@@ -8,6 +8,7 @@ import {
   del,
   requestBody,
   response,
+  param
 } from '@loopback/rest';
 import {Message, MessageRelations} from '../models';
 import {MessageRepository} from '../repositories';
@@ -41,34 +42,25 @@ export class MessageController {
     return this.messageRepository.create(message);
   }
 
-  @get('/messages')
+  @get('/messages/{senderId}/{receiverId}')
   @response(200, {
     description: 'Message model instance',
     content: {
       'application/json': {
-        schema: getModelSchemaRef(Message, {includeRelations: true}),
+        schema: {
+          type: 'array',
+          items: getModelSchemaRef(Message, {includeRelations: true}),
+        },
       },
     },
   })
   async getConversation(
-    @requestBody({
-      content: {
-        'application/json': {
-          schema: {
-            type: 'object',
-            properties: {
-              senderId: {type: 'string'},
-              receiverId: {type: 'string'},
-            },
-            required: ['currentUserId', 'newFriendId'],
-          },
-        },
-      },
-    }) usersId : {senderId: string, receiverId:string}
+    @param.path.string('senderId') senderId: string,
+    @param.path.string('receiverId') receiverId: string,
   ): Promise<Message[]> {
-    const sendedMessages = await this.messageRepository.find({where: {senderId: usersId.senderId, receiverId: usersId.receiverId}})
-    const receivedMessages = await this.messageRepository.find({where: {senderId: usersId.receiverId, receiverId: usersId.senderId}})
-    return sendedMessages.concat(receivedMessages).sort((a, b) => a.date.getTime() - b.date.getTime())
+    const sendedMessages = await this.messageRepository.find({where: {senderId: senderId, receiverId: receiverId}});
+    const receivedMessages = await this.messageRepository.find({where: {senderId: receiverId, receiverId: senderId}});
+    return sendedMessages.concat(receivedMessages).sort((a, b) => a.date.getTime() - b.date.getTime());
   }
 
   @del('/messages/')
