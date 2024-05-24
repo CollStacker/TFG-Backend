@@ -111,6 +111,7 @@ export class ProductController {
             image: product.image,
             publicationDate: product.publicationDate,
             ownerId: collection.ownerId as string,
+            likes: product.likes
           }
           productData.push(newProductData);
         }

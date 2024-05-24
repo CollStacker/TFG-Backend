@@ -7,3 +7,4 @@ export * from './product-field.repository';
 export * from './message.repository';
 export * from './friends-request.repository';
 export * from './product-comments.repository';
+export * from './product-like.repository';

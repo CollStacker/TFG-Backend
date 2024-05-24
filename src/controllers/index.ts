@@ -7,3 +7,4 @@ export * from './user.controller';
 export * from './message.controller';
 export * from './websocket-chat.controller';
 export * from './product-comment.controller';
+export * from './product-like.controller';

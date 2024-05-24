@@ -5,4 +5,5 @@ export interface HomeViewProductDataInterface {
   image?: string,
   publicationDate?: Date,
   ownerId: string,
+  likes?: number,
 }
