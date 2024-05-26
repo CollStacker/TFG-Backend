@@ -12,7 +12,9 @@
     "dist/models/product-like.model.js",
     "dist/models/product-comments.model.js",
     "dist/repositories/product-like.repository.js",
-    "dist/repositories/product-comments.repository.js"
+    "dist/repositories/product-comments.repository.js",
+    "dist/repositories/passport-config.controller.js",
+    "dist/providers/**"
   ],
   "extension": [".js", ".ts"],
   "reporter": ["text", "html"],
