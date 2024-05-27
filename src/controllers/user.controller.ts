@@ -251,7 +251,7 @@ export class UserController {
   })
   async getUserRelevantData(
     @param.path.string('email') email: string,
-  ): Promise<UserRelevantData> {
+  ): Promise<UserRelevantData | null> {
     const user = await this.userRepository.findOne({where: {email: email}});
     if (user) {
       const relevantData: UserRelevantData = {
@@ -265,7 +265,8 @@ export class UserController {
       };
       return relevantData;
     } else {
-      throw new HttpError(400, 'User not found');
+      return null;
+      //throw new HttpError(400, 'User not found');
     }
   }
 
@@ -288,7 +289,7 @@ export class UserController {
   @authenticate('jwt')
   @get('/findUser/{username}')
   @response(204, {
-    description: 'Acces to user relevant data.',
+    description: 'Access to user relevant data.',
   })
   async findUserByUsername(
     @param.path.string('username') username: string,

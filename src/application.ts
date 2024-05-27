@@ -11,7 +11,7 @@ import path from 'path';
 import {MySequence} from './sequence';
 
 // ---------- IMPORTS TO VALIDATE AUTHENTICATION IN THE APP -------------
-import {AuthenticationComponent} from '@loopback/authentication';
+import {AuthenticationComponent,registerAuthenticationStrategy} from '@loopback/authentication';
 import {
   JWTAuthenticationComponent,
   //SECURITY_SCHEME_SPEC,
@@ -21,6 +21,9 @@ import {MongodbDataSource} from './datasources';
 // ----------------------------------------------------------------------
 import { SocketIoServer } from '@loopback/socketio';
 import { WebsocketChatController } from './controllers';
+
+//! Google
+import {GoogleAuthStrategy} from './providers/auth-strategy.provider';
 
 export {ApplicationConfig};
 
@@ -66,5 +69,14 @@ export class CollStacker extends BootMixin(
     //* WEBSOCKET INITIALIZATION
     this.socketServer = new SocketIoServer(this);
     this.socketServer.route(WebsocketChatController);
+
+    //! Google
+    this.bind('googleOAuth2Options').to({
+      clientID: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+      callbackURL: 'http://localhost:3000/auth/google/callback',
+      scope: ['profile', 'email']
+    });
+    registerAuthenticationStrategy(this, GoogleAuthStrategy);
   }
 }
