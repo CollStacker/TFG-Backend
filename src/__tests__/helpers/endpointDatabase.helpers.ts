@@ -1,6 +1,6 @@
-import {ProductRepository, CategoryRepository, CollectionRepository, FriendRepository,MessageRepository, /*UserRepository,*/ ProductFieldRepository} from '../../repositories';
+import {ProductRepository, CategoryRepository, CollectionRepository, FriendRepository,MessageRepository, /*UserRepository,*/ ProductFieldRepository, ProductCommentsRepository, ProductLikeRepository} from '../../repositories';
 import { endpointTestdb } from '../fixtures/datasources/endpointTestdb.datasource';
-import { Collection, Category, Product, Friend, ProductField, Message } from '../../models';
+import { Collection, Category, Product, Friend, ProductField, Message , ProductComments, ProductLike} from '../../models';
 
 export async function givenEmptyEndpointDatabase() {
   await new ProductRepository(endpointTestdb).deleteAll();
@@ -105,3 +105,34 @@ export async function givenMessageField(data?: Partial<Message>) {
   return new MessageRepository(endpointTestdb).create(givenMessageData(data));
 }
 
+//* 8.Comment
+export function givenProductCommentData(data?: Partial<ProductComments>) {
+  return Object.assign(
+    {
+      content: 'testComment',
+      publicationDate: new Date(),
+      userId: '00001',
+      productId: '00101',
+    },
+    data,
+  );
+}
+
+export async function givenProductComment(data?: Partial<ProductComments>) {
+  return new ProductCommentsRepository(endpointTestdb).create(givenProductCommentData(data));
+}
+
+//* 9.Like
+export function givenProductLikeData(data?: Partial<ProductLike>) {
+  return Object.assign(
+    {
+      productId: '00101',
+      userId: '00001'
+    },
+    data,
+  );
+}
+
+export async function givenProductLike(data?: Partial<ProductLike>) {
+  return new ProductLikeRepository(endpointTestdb).create(givenProductLikeData(data));
+}

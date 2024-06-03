@@ -245,3 +245,36 @@ export const message4Example = {
   toJSON: Object,
   toObject: Object,
 }
+
+export const productCommentFirstExample = {
+  content: 'testContent',
+  publicationDate: '2024-06-03T08:42:34.663Z',
+  userId: '00001',
+  productId: '00101',
+  getId: () => {},
+  getIdObject: Object,
+  toJSON: Object,
+  toObject: Object,
+};
+
+export const productCommentSecondExample = {
+  content: 'testContent2',
+  publicationDate: '2024-06-03T08:42:34.663Z',
+  userId: '00002',
+  productId: '00101',
+};
+
+
+export const productLikeFirstExample = {
+  productId: '1',
+  userId: '00001',
+  getId: () => {},
+  getIdObject: Object,
+  toJSON: Object,
+  toObject: Object,
+};
+
+export const productLikeSecondExample = {
+  productId: '00101',
+  userId: '00002',
+};

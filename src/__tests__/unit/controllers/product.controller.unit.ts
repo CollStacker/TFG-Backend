@@ -38,7 +38,7 @@ describe('Product controller test', () => {
   it('Create new product', async () => {
     const createdProduct = await productController.create(productFourthExample);
     const expectedProduct = {
-      _id: '4',
+      _id: '5',
       name: 'testProduct4',
       description: 'testDesc',
       image: 'testImage',
@@ -68,6 +68,24 @@ describe('Product controller test', () => {
     expect(updatedProduct.name).to.equal('updatedProduct');
   })
 
+  it('Get last 20 product posted on app', async () => {
+    await collectionRepository.create({title: 'ttt55',ownerId:'1111'});
+    const collectionCreated = await collectionRepository.findOne({where: {title: 'ttt55'}});
+    await productRepository.create({name: 'ttt', collectionId: collectionCreated?._id})
+    const products = await productController.find();
+    const expectedResult = [{
+      _id: '6',
+      name: 'ttt',
+      description: undefined,
+      image: null,
+      publicationDate: undefined,
+      ownerId: '1111',
+      likes: 0
+    }]
+    expect(products).to.deepEqual(expectedResult);
+    expect(products.length).to.equal(1);
+  })
+
   it('Delete a product by ID', async () => {
     try {
       await productController.deleteById('4')
@@ -80,5 +98,7 @@ describe('Product controller test', () => {
   it( 'Try to get products from a collection with anyone', async () => {
     const foundedProducts = await productController.getCollectionProducts('10');
     expect(foundedProducts).to.be.null();
-  })
+  });
+
+
 });
