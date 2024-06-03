@@ -1,5 +1,5 @@
-import {ProductRepository, CategoryRepository, CollectionRepository, FriendRepository, ProductFieldRepository, MessageRepository, FriendsRequestRepository} from '../../repositories';
-import {Product, Category, Collection, Friend, ProductField, Message, FriendsRequest} from '../../models'
+import {ProductRepository, CategoryRepository, CollectionRepository, FriendRepository, ProductFieldRepository, MessageRepository, FriendsRequestRepository, ProductCommentsRepository, ProductLikeRepository} from '../../repositories';
+import {Product, Category, Collection, Friend, ProductField, Message, FriendsRequest, ProductComments, ProductLike} from '../../models'
 import {testdb} from '../fixtures/datasources/testdb.datasource';
 
 export async function givenEmptyDatabase() {
@@ -143,3 +143,34 @@ export async function givenMessageField(data?: Partial<Message>) {
   return new MessageRepository(testdb).create(givenMessageData(data));
 }
 
+//* 8.Comment
+export function givenProductCommentData(data?: Partial<ProductComments>) {
+  return Object.assign(
+    {
+      content: 'testComment',
+      publicationDate: new Date(),
+      userId: '00001',
+      productId: '00101',
+    },
+    data,
+  );
+}
+
+export async function givenProductComment(data?: Partial<ProductComments>) {
+  return new ProductCommentsRepository(testdb).create(givenProductCommentData(data));
+}
+
+//* 8.Like
+export function givenProductLikeData(data?: Partial<ProductLike>) {
+  return Object.assign(
+    {
+      productId: '00101',
+      userId: '00001'
+    },
+    data,
+  );
+}
+
+export async function givenProductLike(data?: Partial<ProductLike>) {
+  return new ProductLikeRepository(testdb).create(givenProductLikeData(data));
+}
