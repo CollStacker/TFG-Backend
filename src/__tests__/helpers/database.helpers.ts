@@ -160,7 +160,7 @@ export async function givenProductComment(data?: Partial<ProductComments>) {
   return new ProductCommentsRepository(testdb).create(givenProductCommentData(data));
 }
 
-//* 8.Like
+//* 9.Like
 export function givenProductLikeData(data?: Partial<ProductLike>) {
   return Object.assign(
     {

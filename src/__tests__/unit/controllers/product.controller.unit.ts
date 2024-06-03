@@ -38,7 +38,7 @@ describe('Product controller test', () => {
   it('Create new product', async () => {
     const createdProduct = await productController.create(productFourthExample);
     const expectedProduct = {
-      _id: '4',
+      _id: '5',
       name: 'testProduct4',
       description: 'testDesc',
       image: 'testImage',
@@ -74,7 +74,7 @@ describe('Product controller test', () => {
     await productRepository.create({name: 'ttt', collectionId: collectionCreated?._id})
     const products = await productController.find();
     const expectedResult = [{
-      _id: '5',
+      _id: '6',
       name: 'ttt',
       description: undefined,
       image: null,
