@@ -139,21 +139,20 @@ export class ProductController {
   //   return this.productRepository.updateAll(product, where);
   // }
 
-  // @get('/products/{id}')
-  // @response(200, {
-  //   description: 'Product model instance',
-  //   content: {
-  //     'application/json': {
-  //       schema: getModelSchemaRef(Product, {includeRelations: true}),
-  //     },
-  //   },
-  // })
-  // async findById(
-  //   @param.path.string('id') id: string,
-  //   @param.filter(Product, {exclude: 'where'}) filter?: FilterExcludingWhere<Product>
-  // ): Promise<Product> {
-  //   return this.productRepository.findById(id, filter);
-  // }
+  @get('/product/{id}')
+  @response(200, {
+    description: 'Product model instance',
+    content: {
+      'application/json': {
+        schema: getModelSchemaRef(Product, {includeRelations: true}),
+      },
+    },
+  })
+  async findById(
+    @param.path.string('id') id: string,
+  ): Promise<Product> {
+    return this.productRepository.findById(id);
+  }
 
   @patch('/products/{id}')
   @response(204, {

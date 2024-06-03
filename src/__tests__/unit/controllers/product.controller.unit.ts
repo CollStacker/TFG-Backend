@@ -86,6 +86,11 @@ describe('Product controller test', () => {
     expect(products.length).to.equal(1);
   })
 
+  it('Get a product by his id', async () => {
+    const product = await productController.findById('6');
+    expect(product).to.not.be.null();
+  });
+
   it('Delete a product by ID', async () => {
     try {
       await productController.deleteById('4')
