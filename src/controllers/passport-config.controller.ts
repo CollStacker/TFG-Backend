@@ -90,7 +90,7 @@ export class AuthController {
           token,
         };
 
-        const frontendURL = `http://localhost:5173/?user=${encodeURIComponent(JSON.stringify(userWithToken))}`;
+        const frontendURL = `https://dapper-sopapillas-02c8f2.netlify.app/?user=${encodeURIComponent(JSON.stringify(userWithToken))}`;
         this.res.redirect(frontendURL);
       }
       this.res.status(404).send('User not found')
