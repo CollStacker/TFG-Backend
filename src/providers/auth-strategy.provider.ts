@@ -44,9 +44,9 @@ export class GoogleAuthStrategy implements AuthenticationStrategy {
     );
     // console.log(this.passportstrategy)
     // console.log(strategy.authenticate(request))
-    // console.log(request);
+    console.log(request);
     const result = await strategy.authenticate(request);
-    // console.log("Resultado de authenticate:", result);
+    console.log("Resultado de authenticate:", result);
     // console.log(typeof result)
     return result;
   }
