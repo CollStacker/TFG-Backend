@@ -41,7 +41,7 @@ export class AuthController {
         code,
         client_id: process.env.GOOGLE_CLIENT_ID as string,
         client_secret: process.env.GOOGLE_CLIENT_SECRET as string,
-        redirect_uri: 'http://localhost:3000/auth/google/callback',
+        redirect_uri: 'https://tfg-backend-production-4dda.up.railway.app/auth/google/callback',
         grant_type: 'authorization_code',
       };
       const tokenResponse = await axios.post('https://oauth2.googleapis.com/token', null, { params});

@@ -74,7 +74,7 @@ export class CollStacker extends BootMixin(
     this.bind('googleOAuth2Options').to({
       clientID: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-      callbackURL: 'http://localhost:3000/auth/google/callback',
+      callbackURL: 'https://tfg-backend-production-4dda.up.railway.app/auth/google/callback',
       scope: ['profile', 'email']
     });
     registerAuthenticationStrategy(this, GoogleAuthStrategy);
